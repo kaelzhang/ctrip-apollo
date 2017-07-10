@@ -14,7 +14,7 @@
 
 # ctrip-apollo
 
-<!-- description -->
+Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo)
 
 ## Install
 
@@ -25,7 +25,7 @@ $ npm install ctrip-apollo --save
 ## Usage
 
 ```js
-const ctrip_apollo = require('ctrip-apollo')
+const Apollo = require('ctrip-apollo')
 ```
 
 ## License
