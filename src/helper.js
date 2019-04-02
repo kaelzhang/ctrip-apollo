@@ -27,6 +27,9 @@ const createQuery = options => {
 
 const DEFAULT_NAMESPACE = 'application'
 
+// Ref
+// https://github.com/ctripcorp/apollo/wiki/其它语言客户端接入指南
+
 const queryConfig = (
   // host
   h,

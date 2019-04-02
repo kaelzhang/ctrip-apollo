@@ -42,12 +42,12 @@ await client.ready()
   - **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
   - **appId** `string` apollo application id
   - **cluster** `string` cluster name
-  - **namespace?** `string='application'` namespace nam
+  - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
   - **longPolling?** `boolean=true` set to `false` to disable HTTP long polling.
   - **cachePath?** `path` set the `cachePath` to enable the feature to save configurations to the disk
 
-Returns `ApolloClient` class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)
+Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)
 
 ### await client.ready()
 
