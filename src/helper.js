@@ -25,6 +25,8 @@ const createQuery = options => {
   return `?${stringify(query)}`
 }
 
+const DEFAULT_NAMESPACE = 'application'
+
 const queryConfig = (
   // host
   h,
@@ -33,7 +35,7 @@ const queryConfig = (
   // cluster
   c,
   // namespace
-  n,
+  n = DEFAULT_NAMESPACE,
   // releaseKey: optional
   r,
   // ip: optional
@@ -56,7 +58,7 @@ const queryConfigAsJson = (
   h,
   a,
   c,
-  n,
+  n = DEFAULT_NAMESPACE,
   // ip: optional
   i,
   // dataCenter: optional
