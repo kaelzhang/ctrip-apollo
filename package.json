@@ -50,6 +50,7 @@
     "babel-register": "^6.24.1"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0"
+    "babel-runtime": "^6.23.0",
+    "err-object": "^4.1.0"
   }
 }
