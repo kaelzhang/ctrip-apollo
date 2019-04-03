@@ -87,9 +87,7 @@ class ApolloClient extends EventEmitter {
       this.emit('change', {
         oldValue,
         newValue,
-        key,
-        // TODO
-        type
+        key
       })
     })
 

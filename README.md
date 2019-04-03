@@ -44,7 +44,7 @@ await client.ready()
   - **cluster?** `string='default'` cluster name
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
-  - **fetchCachedConfig** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
+  - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
   - **updateNotification?** `boolean=false` set to `true` to enable update notification by using HTTP long polling.
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
 
@@ -88,7 +88,7 @@ Creates and returns a new `ApolloClient` with `namespace`. If the given `namespa
 const ns = client.namespace('web')
 ```
 
-### Event: `change`
+### Event: `'change'`
 
 Emits if the any configuration changes. `ctrip-apollo` uses HTTP long polling to listen the changes of the configurations.
 
@@ -99,17 +99,16 @@ client.on('change', e => {
   console.log('key', e.key)
   console.log('oldValue', e.oldValue)
   console.log('newValue', e.newValue)
-  console.log('type', e.type)
 })
 ```
 
-If `options.refreshInterval` is set to `0` and `options.longPolling` is set to `false`, then the event will never emit.
+If `options.refreshInterval` is set to `0` and `options.updateNotification` is set to `false`, then the event will never emit.
 
-### Event: `fetch-error`
+### Event: `'fetch-error'`
 
 Emits if it fails to fetch configurations
 
-### Event: 'save-error'
+### Event: `'save-error'`
 
 Emits if it fails to save configurations to local cache file
 
