@@ -37,6 +37,10 @@
     "ava": "^0.16.0"
   },
   "dependencies": {
-    "err-object": "^4.1.0"
+    "core-util-is": "^1.0.2",
+    "err-object": "^4.1.0",
+    "fs-extra": "^7.0.1",
+    "request": "^2.88.0",
+    "skema": "^9.4.1"
   }
 }

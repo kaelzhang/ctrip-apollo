@@ -41,10 +41,11 @@ await client.ready()
 - **options** `Object`
   - **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
   - **appId** `string` apollo application id
-  - **cluster** `string` cluster name
+  - **cluster?** `string='default'` cluster name
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
-  - **longPolling?** `boolean=true` set to `false` to disable HTTP long polling.
+  - **fetchCachedConfig** `boolean=true` whether refresh configurations by fetching the restful API which with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
+  - **updateNotification?** `boolean=false` set to `true` to enable update notification HTTP long polling.
   - **cachePath?** `path` set the `cachePath` to enable the feature to save configurations to the disk
 
 Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)
@@ -99,6 +100,14 @@ client.on('change', e => {
 ```
 
 If `options.refreshInterval` is set to `0` and `options.longPolling` is set to `false`, then the event will never emit.
+
+### Event: `fetch-error`
+
+Emits if it fails to fetch configurations
+
+### Event: 'save-error'
+
+Emits if it fails to save configurations to local cache file
 
 ## License
 

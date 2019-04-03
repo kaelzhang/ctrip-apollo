@@ -25,48 +25,48 @@ const createQuery = options => {
   return `?${stringify(query)}`
 }
 
-const DEFAULT_NAMESPACE = 'application'
-
 // Ref
 // https://github.com/ctripcorp/apollo/wiki/其它语言客户端接入指南
 
-const queryConfig = (
+// API url without cache
+const queryConfig = ({
   // host
-  h,
+  host: h,
   // appId
-  a,
+  appId: a,
   // cluster
-  c,
+  cluster: c,
   // namespace
-  n = DEFAULT_NAMESPACE,
+  namespace: n,
   // releaseKey: optional
-  r,
+  releaseKey: r,
   // ip: optional
-  i,
+  ip: i,
   // dataCenter: optional
-  d,
+  dataCenter: d,
   // messages: optional
-  m
+  // messages: m
 
-) => `${h}/configs/${a}/${c}/${n}${
+}) => `${h}/configs/${a}/${c}/${n}${
   createQuery({
     releaseKey: r,
     ip: i,
     dataCenter: d,
-    messages: m
+    // messages: m
   })
 }`
 
-const queryConfigAsJson = (
-  h,
-  a,
-  c,
-  n = DEFAULT_NAMESPACE,
+// API url with cache
+const queryConfigAsJson = ({
+  host: h,
+  appId: a,
+  cluster: c,
+  namespace: n,
   // ip: optional
-  i,
+  ip: i,
   // dataCenter: optional
-  d
-) => `${h}/configfiles/json/${a}/${c}/${n}${
+  dataCenter: d
+}) => `${h}/configfiles/json/${a}/${c}/${n}${
   createQuery({
     ip: i,
     dataCenter: d
