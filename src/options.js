@@ -60,10 +60,11 @@ const ensureType = object => {
       return
     }
 
-    if (!validate(v)) {
+    if (validate && !validate(v)) {
       throw error(`INVALID_${key.toUpperCase()}`, v)
     }
 
+    // Setters can throw
     if (set) {
       object[key] = set(v)
     }

@@ -15,7 +15,7 @@
 
 # ctrip-apollo
 
-Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo)
+The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo)
 
 ## Install
 
@@ -44,17 +44,21 @@ await client.ready()
   - **cluster?** `string='default'` cluster name
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
-  - **fetchCachedConfig** `boolean=true` whether refresh configurations by fetching the restful API which with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
-  - **updateNotification?** `boolean=false` set to `true` to enable update notification HTTP long polling.
-  - **cachePath?** `path` set the `cachePath` to enable the feature to save configurations to the disk
+  - **fetchCachedConfig** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
+  - **updateNotification?** `boolean=false` set to `true` to enable update notification by using HTTP long polling.
+  - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
 
 Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)
+
+### options.updateNotification
+
+If `options.updateNotification` is enabled, `options.refreshInterval` will be disabled unless
 
 ### await client.ready()
 
 Fetch the configuration from config service for the first time or fallback to local cache file.
 
-Make sure we await `client.ready()` before any `client.config()` or `client.get()` methods are invoked.
+**MAKE SURE** we await `client.ready()` before any `client.config()` or `client.get()` methods are invoked.
 
 ### client.config()
 

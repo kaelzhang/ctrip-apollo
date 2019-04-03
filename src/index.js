@@ -31,7 +31,7 @@ const request = url => new Promise((resolve, reject) => {
   })
 })
 
-class Apollo extends EventEmitter {
+class ApolloClient extends EventEmitter {
   constructor (options) {
     super()
     this._options = checkOptions(options)
@@ -192,12 +192,12 @@ class Apollo extends EventEmitter {
       namespace
     }
 
-    return new Apollo(options)
+    return new ApolloClient(options)
   }
 }
 
-const apollo = options => new Apollo()
+const apollo = options => new ApolloClient()
 
-apollo.Apollo = Apollo
+apollo.ApolloClient = ApolloClient
 
 module.exports = apollo
