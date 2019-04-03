@@ -1,7 +1,7 @@
 {
   "name": "ctrip-apollo",
   "version": "1.0.0",
-  "description": "ctrip-apollo",
+  "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc ava --verbose --timeout=10s test/*.test.js",
@@ -22,7 +22,7 @@
     "config service"
   ],
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "author": "kaelzhang",
   "license": "MIT",

@@ -114,4 +114,4 @@ Emits if it fails to save configurations to local cache file
 
 ## License
 
-MIT
+[MIT](LICENSE)
