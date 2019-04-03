@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/kaelzhang/node-ctrip-apollo.svg?branch=master)](https://travis-ci.org/kaelzhang/node-ctrip-apollo)
-[![Coverage](https://codecov.io/gh/kaelzhang/node-ctrip-apollo/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/node-ctrip-apollo)
+[![Build Status](https://travis-ci.org/kaelzhang/ctrip-apollo.svg?branch=master)](https://travis-ci.org/kaelzhang/ctrip-apollo)
+[![Coverage](https://codecov.io/gh/kaelzhang/ctrip-apollo/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/ctrip-apollo)
 <!-- optional appveyor tst
-[![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kaelzhang/node-ctrip-apollo?branch=master&svg=true)](https://ci.appveyor.com/project/kaelzhang/node-ctrip-apollo)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kaelzhang/ctrip-apollo?branch=master&svg=true)](https://ci.appveyor.com/project/kaelzhang/ctrip-apollo)
 -->
 <!-- optional npm version
 [![NPM version](https://badge.fury.io/js/ctrip-apollo.svg)](http://badge.fury.io/js/ctrip-apollo)
@@ -10,7 +10,7 @@
 [![npm module downloads per month](http://img.shields.io/npm/dm/ctrip-apollo.svg)](https://www.npmjs.org/package/ctrip-apollo)
 -->
 <!-- optional dependency status
-[![Dependency Status](https://david-dm.org/kaelzhang/node-ctrip-apollo.svg)](https://david-dm.org/kaelzhang/node-ctrip-apollo)
+[![Dependency Status](https://david-dm.org/kaelzhang/ctrip-apollo.svg)](https://david-dm.org/kaelzhang/ctrip-apollo)
 -->
 
 # ctrip-apollo

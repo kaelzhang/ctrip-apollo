@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/kaelzhang/node-ctrip-apollo.git"
+    "url": "git://github.com/kaelzhang/ctrip-apollo.git"
   },
   "keywords": [
     "ctrip-apollo",
@@ -28,7 +28,7 @@
   "author": "kaelzhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kaelzhang/node-ctrip-apollo/issues"
+    "url": "https://github.com/kaelzhang/ctrip-apollo/issues"
   },
   "ava": {
     "babel": false
