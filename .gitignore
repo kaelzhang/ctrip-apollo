@@ -1,6 +1,10 @@
 # babel dist
 /lib
 
+# coverage
+.nyc_output
+*.lcov
+
 # Numerous always-ignore extensions
 *.bak
 *.patch

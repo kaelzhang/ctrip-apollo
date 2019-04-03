@@ -4,9 +4,8 @@
   "description": "ctrip-apollo",
   "main": "src/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
-    "test": "npm run build && node --harmony ./node_modules/.bin/ava --verbose --timeout=10s",
-    "prepublish": "npm run build"
+    "test": "nyc ava --verbose --timeout=10s test/*.test.js",
+    "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "files": [
     "src/"
@@ -34,7 +33,9 @@
     "babel": false
   },
   "devDependencies": {
-    "ava": "^0.16.0"
+    "ava": "^0.16.0",
+    "codecov": "^3.3.0",
+    "nyc": "^13.3.0"
   },
   "dependencies": {
     "core-util-is": "^1.0.2",
