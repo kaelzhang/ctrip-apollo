@@ -15,12 +15,13 @@
 
 # ctrip-apollo
 
-The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service, which
+The most delightful and handy Node.js client for Ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service, which
 
 - **With easy-to-use APIs** that just leave everything else to `ctrip-apollo`
 - **Implements update notifications** by using HTTP long polling, and handles all kinds of network errors.
 - **Supports custom retry policy for polling**
 - **Implements disk cache** to against the situation that all config services are down.
+- **Updates configurations in background** that we could get a specific config property with a synchronous method with **NO** performance issues.
 
 `ctrip-apollo` directly uses `async/await` and requires node >= 7.10.1
 
@@ -59,7 +60,7 @@ console.log(client.get('portal.elastic.cluster.name'))
 
 Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter).
 
-### options.updateNotification
+#### options.updateNotification
 
 If `options.updateNotification` is enabled, `options.fetchInterval` will be disabled unless polling is [abandoned](https://github.com/kaelzhang/ctrip-apollo#apollopollingretrypolicy-functionretries-pollingretrypolicy).
 
