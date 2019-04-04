@@ -221,9 +221,12 @@ class ApolloClient extends EventEmitter {
     this._diffAndSave(result)
   }
 
-  _initDone () {
+  _initDone (save) {
     this._polling.addNamespace(this._options.namespace)
-    this._save()
+
+    if (save) {
+      this._save()
+    }
   }
 
   async ready () {
@@ -234,7 +237,7 @@ class ApolloClient extends EventEmitter {
       ({
         config: this._config
       } = await this._loadWithNoCache())
-      return this._initDone()
+      return this._initDone(true)
     } catch (err) {
       this.emit('fetch-error', err)
       fetchError = err
