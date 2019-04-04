@@ -54,7 +54,7 @@ Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`
 
 ### options.updateNotification
 
-If `options.updateNotification` is enabled, `options.refreshInterval` will be disabled unless
+If `options.updateNotification` is enabled, `options.fetchInterval` will be disabled unless polling is [abandoned](https://github.com/kaelzhang/ctrip-apollo#apollopollingretrypolicy-functionretries-pollingretrypolicy).
 
 ### await client.ready()
 
@@ -92,9 +92,9 @@ const ns = client.namespace('web')
 
 ### Event: `'change'`
 
-Emits if the any configuration changes. `ctrip-apollo` uses HTTP long polling to listen the changes of the configurations.
+Emits if the any configuration changes.
 
-And the client will pull the new configurations every `5` miutes which can be changed by `options.refreshInterval`
+By default, `ctrip-apollo` uses HTTP long polling to listen the changes of the configurations.
 
 ```js
 client.on('change', e => {
@@ -104,7 +104,7 @@ client.on('change', e => {
 })
 ```
 
-If `options.refreshInterval` is set to `0` and `options.updateNotification` is set to `false`, then the event will never emit.
+If `options.fetchInterval` is set to `0` and `options.updateNotification` is set to `false`, then the event will never emit.
 
 ### Event: `'fetch-error'`
 
@@ -120,6 +120,8 @@ Emits if it fails to save configurations to local cache file
 
 `apollo.pollingRetryPolicy` accepts a `Function(retries)` which returns an interface of `PollingRetryPolicy`
 
+- **retries** `number` how many times has retried till the last error.
+
 ```ts
 interface PollingRetryPolicy {
   // `abandon: true` ignores all properties below
@@ -127,20 +129,32 @@ interface PollingRetryPolicy {
   // After that,
   // `ctrip-apollo` will fallback to fetching configurations
   // every `fetchInterval` milliseconds
-  abandon: boolean
+  abandon?: boolean
   // After `delay` milliseconds,
   // it will try to poll the update notification again
-  delay: number
+  delay?: number
   // Tells the system to reset the `retries` counter.
-  // And the `retries` counter always reset if it receives a notification successfully
-  reset: boolean
+  // And the `retries` counter always reset to zero if it receives a sucessful notification
+  reset?: boolean
 }
+
+// If there is no properties set, it will retry immediately.
 ```
 
 The default `apollo.pollingRetryPolicy` is equivalent to:
 
 ```js
 apollo.pollingRetryPolicy = apollo.DEFAULT_POLLING_RETRY_POLICY
+```
+
+And we can define our own policy
+
+```js
+apollo.pollingRetryPolicy = retries => ({
+  // Stop polling after 11(the first and the latter 10 retries) errors
+  abandon: retries >= 10,
+  delay: retries * 10 * 1000
+})
 ```
 
 ## License

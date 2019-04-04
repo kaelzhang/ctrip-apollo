@@ -78,7 +78,7 @@ const queryUpdate = ({
   appId,
   cluster,
   notifications: n
-}) => `${h}/notifications/v2${
+}) => `${host}/notifications/v2${
   createQuery({
     appId,
     cluster,

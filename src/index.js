@@ -1,5 +1,6 @@
 const EventEmitter = require('events')
 const path = require('path')
+const log = require('util').debuglog('ctrip-apollo')
 const req = require('request')
 const fs = require('fs-extra')
 
@@ -22,7 +23,10 @@ const request = url => new Promise((resolve, reject) => {
       return reject(error('FETCH_REQUEST_ERROR', err))
     }
 
-    const {body, status} = response
+    const {
+      body,
+      statusCode: status
+    } = response
 
     if (status === 304) {
       return resolve({
@@ -58,12 +62,11 @@ class ApolloClient extends EventEmitter {
     this._fetchCachedConfig = this._options.fetchCachedConfig
     this._cacheFile = this._createCacheFile()
 
-    if (this._options.updateNotification) {
-      this._initNotification()
-      return
-    }
+    this._polling = null
 
-    this._initFetch()
+    this._options.updateNotification
+      ? this._initNotification()
+      : this._initFetch()
   }
 
   _createCacheFile () {
@@ -103,6 +106,11 @@ class ApolloClient extends EventEmitter {
 
       this._fetch(this._options.fetchCachedConfig)
     })
+
+    polling.on('abandon', () => {
+      // If abandoned, downgrade to fetch
+      this._initFetch()
+    })
   }
 
   async _load (url, converter) {
@@ -136,11 +144,14 @@ class ApolloClient extends EventEmitter {
       releaseKey: this._releaseKey
     })
 
+    log('client: load with no cache: %s', url)
     return this._load(url, CONVERTER.NO_CACHE)
   }
 
   _loadWithCache () {
     const url = queryConfigAsJson(this._options)
+
+    log('client: load with cache: %s', url)
     return this._load(url, CONVERTER.CACHE)
   }
 
@@ -152,7 +163,13 @@ class ApolloClient extends EventEmitter {
 
     // Save asynchronously
     fs.outputJson(cacheFile, this._config, err => {
-      this.emit('save-error', err)
+      if (err) {
+        log('client: save error, stack: %s', err.stack)
+        this.emit('save-error', err)
+        return
+      }
+
+      log('client: save success')
     })
   }
 
@@ -199,6 +216,11 @@ class ApolloClient extends EventEmitter {
     this._diffAndSave(result)
   }
 
+  _initDone () {
+    this._polling.addNamespace(this._options.namespace)
+    this._save()
+  }
+
   async ready () {
     let config
     let fetchError
@@ -207,7 +229,7 @@ class ApolloClient extends EventEmitter {
       ({
         config: this._config
       } = await this._loadWithNoCache())
-      return
+      return this._initDone()
     } catch (err) {
       this.emit('fetch-error', err)
       fetchError = err
@@ -234,7 +256,7 @@ class ApolloClient extends EventEmitter {
       throw error('READ_LOCAL_CACHE_FAILS', err, cacheFile)
     }
 
-    this._save()
+    this._initDone()
   }
 
   config () {
@@ -275,6 +297,6 @@ Object.defineProperties(apollo, {
   DEFAULT_POLLING_RETRY_POLICY: {
     value: DEFAULT_POLLING_RETRY_POLICY
   }
-)
+})
 
 module.exports = apollo

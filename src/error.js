@@ -11,7 +11,7 @@ const EE = (name, type, desc = name, unit = 'a') => E(
   TypeError
 )
 
-E('FETCH_STATUS_ERROR', 'config service does not response 200, but got %s')
+E('FETCH_STATUS_ERROR', 'config service got response status %s')
 
 E('POLLING_STATUS_ERROR', 'polling response status %s')
 
