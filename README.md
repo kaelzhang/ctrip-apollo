@@ -17,7 +17,7 @@
 
 The most delightful and handy Node.js client for Ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service, which
 
-- **With easy-to-use APIs** that just leave everything else to `ctrip-apollo`
+- **Provides easy-to-use APIs** that just leave everything else to `ctrip-apollo`
 - **Implements update notifications** by using HTTP long polling, and handles all kinds of network errors.
 - **Supports custom retry policy for polling**
 - **Implements disk cache** to against the situation that all config services are down.
@@ -189,7 +189,11 @@ const client = apollo({
 
 await client.ready()
 
-client.config()
+console.log(client.config())
+// {
+//   'portal.elastic.document.type': 'biz',
+//   'portal.elastic.cluster.name': 'hermes-es-fws'
+// }
 ```
 
 ### Disable update notifications(HTTP long polling)
