@@ -3,11 +3,14 @@
 
 const EventEmitter = require('events')
 const log = require('util').debuglog('ctrip-apollo')
+const {parse} = require('querystring')
 const request = require('request')
 
 const {createKey} = require('./util')
 const {queryUpdate} = require('./url')
 const {error} = require('./error')
+
+const DEFAULT_NAMESPACE = 'application'
 
 class Polling extends EventEmitter {
   constructor (options) {
@@ -37,11 +40,13 @@ class Polling extends EventEmitter {
 
     for (const namespace of this._ns.values()) {
       const item = {
-        namespaceName: `${namespace}.json`
-      }
+        namespaceName: namespace === DEFAULT_NAMESPACE
+          ? namespace
+          : `${namespace}.json`,
 
-      if (namespace in this._notificationIds) {
-        ret.notificationId = this._notificationIds[namespace]
+        notificationId: (namespace in this._notificationIds)
+          ? this._notificationIds[namespace]
+          : 0
       }
 
       notifications.push(item)
@@ -57,6 +62,8 @@ class Polling extends EventEmitter {
       ...this._options,
       notifications: this._getNotifications()
     })
+
+    log('polling: request %s', decodeURIComponent(url))
 
     request(url, (err, response) => {
       log('polling: responses')
@@ -102,7 +109,7 @@ class Polling extends EventEmitter {
     log('polling: error, code: %s, stack: %s', err.code, err.stack)
 
     const {
-      delay,
+      delay = 0,
       reset,
       abandon
     } = PollingManager.pollingRetryPolicy(retries)
@@ -113,13 +120,14 @@ class Polling extends EventEmitter {
       return
     }
 
+    const nextRetries = reset
+      ? 0
+      : retries + 1
+
+    log('polling: retry %s in %s ms', nextRetries, delay)
     setTimeout(() => {
-      this.start(
-        reset
-          ? 0
-          : retries + 1
-      )
-    })
+      this.start(nextRetries)
+    }, delay)
   }
 
   _diff (notifications) {
@@ -132,6 +140,8 @@ class Polling extends EventEmitter {
       if (!oldNotificationId) {
         // Update the current notification id
         this._notificationIds[namespaceName] = notificationId
+
+        // Do not emit update for the first time
         return
       }
 
@@ -139,6 +149,7 @@ class Polling extends EventEmitter {
         return
       }
 
+      this._notificationIds[namespaceName] = notificationId
       this.emit('update', namespaceName)
     })
 

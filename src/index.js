@@ -104,6 +104,7 @@ class ApolloClient extends EventEmitter {
         return
       }
 
+      log('client: receive update, start to fetch')
       this._fetch(this._options.fetchCachedConfig)
     })
 
