@@ -39,19 +39,19 @@ const queryConfig = ({
   // namespace
   namespace: n,
   // releaseKey: optional
-  releaseKey: r,
+  releaseKey,
   // ip: optional
-  ip: i,
+  ip,
   // dataCenter: optional
-  dataCenter: d,
+  dataCenter,
   // messages: optional
   // messages: m
 
 }) => `${h}/configs/${a}/${c}/${n}${
   createQuery({
-    releaseKey: r,
-    ip: i,
-    dataCenter: d,
+    releaseKey,
+    ip,
+    dataCenter,
     // messages: m
   })
 }`
@@ -63,17 +63,31 @@ const queryConfigAsJson = ({
   cluster: c,
   namespace: n,
   // ip: optional
-  ip: i,
+  ip,
   // dataCenter: optional
-  dataCenter: d
+  dataCenter
 }) => `${h}/configfiles/json/${a}/${c}/${n}${
   createQuery({
-    ip: i,
-    dataCenter: d
+    ip,
+    dataCenter
+  })
+}`
+
+const queryUpdate = ({
+  host,
+  appId,
+  cluster,
+  notifications: n
+}) => `${h}/notifications/v2${
+  createQuery({
+    appId,
+    cluster,
+    notifications: JSON.stringify(n)
   })
 }`
 
 module.exports = {
   queryConfigAsJson,
-  queryConfig
+  queryConfig,
+  queryUpdate
 }

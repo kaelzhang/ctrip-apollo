@@ -45,7 +45,7 @@ console.log(client.get('portal.elastic.cluster.name'))
   - **appId** `string` apollo application id
   - **cluster?** `string='default'` cluster name
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
-  - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
+  - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
   - **updateNotification?** `boolean=true` set to `true` to enable update notification by using HTTP long polling.
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
@@ -113,6 +113,35 @@ Emits if it fails to fetch configurations
 ### Event: `'save-error'`
 
 Emits if it fails to save configurations to local cache file
+
+## apollo.pollingRetryPolicy `Function(retries): PollingRetryPolicy`
+
+`apollo.pollingRetryPolicy` is a setter to change the global policy to tell the system what to do next if an error occured when polling update notifications.
+
+`apollo.pollingRetryPolicy` accepts a `Function(retries)` which returns an interface of `PollingRetryPolicy`
+
+```ts
+interface PollingRetryPolicy {
+  // `abandon: true` ignores all properties below
+  // and stops update notification polling which is a dangerous directive
+  // After that,
+  // `ctrip-apollo` will fallback to fetching configurations
+  // every `fetchInterval` milliseconds
+  abandon: boolean
+  // After `delay` milliseconds,
+  // it will try to poll the update notification again
+  delay: number
+  // Tells the system to reset the `retries` counter.
+  // And the `retries` counter always reset if it receives a notification successfully
+  reset: boolean
+}
+```
+
+The default `apollo.pollingRetryPolicy` is equivalent to:
+
+```js
+apollo.pollingRetryPolicy = apollo.DEFAULT_POLLING_RETRY_POLICY
+```
 
 ## License
 

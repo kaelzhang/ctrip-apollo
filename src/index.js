@@ -4,11 +4,17 @@ const req = require('request')
 const fs = require('fs-extra')
 
 const checkOptions = require('./options')
+const {createKey} = require('./util')
 const {error} = require('./error')
 const {
   queryConfigAsJson,
   queryConfig
-} = require('./helper')
+} = require('./url')
+const {
+  DEFAULT_POLLING_RETRY_POLICY,
+  manager,
+  PollingManager
+} = require('./polling')
 
 const request = url => new Promise((resolve, reject) => {
   req(url, (err, response) => {
@@ -22,6 +28,10 @@ const request = url => new Promise((resolve, reject) => {
       return resolve({
         noChange: true
       })
+    }
+
+    if (status !== 200) {
+      return reject(error('FETCH_STATUS_ERROR', status))
     }
 
     try {
@@ -47,6 +57,13 @@ class ApolloClient extends EventEmitter {
     this._releaseKey = null
     this._fetchCachedConfig = this._options.fetchCachedConfig
     this._cacheFile = this._createCacheFile()
+
+    if (this._options.updateNotification) {
+      this._initNotification()
+      return
+    }
+
+    this._initFetch()
   }
 
   _createCacheFile () {
@@ -65,16 +82,27 @@ class ApolloClient extends EventEmitter {
       namespace,
     } = this._options
 
-    const filename = [
+    const filename = createKey(
       host,
       appId,
       cluster,
       namespace
-    ].join(':')
+    )
 
-    const encoded = Buffer.from(filename).toString('base64')
+    return path.join(cachePath, filename)
+  }
 
-    return path.join(cachePath, encoded)
+  _initNotification () {
+    const polling = manager.register(this._options)
+    this._polling = polling
+
+    polling.on('update', namespace => {
+      if (namespace !== this._options.namespace) {
+        return
+      }
+
+      this._fetch(this._options.fetchCachedConfig)
+    })
   }
 
   async _load (url, converter) {
@@ -236,5 +264,17 @@ class ApolloClient extends EventEmitter {
 const apollo = options => new ApolloClient(options)
 
 apollo.ApolloClient = ApolloClient
+
+Object.defineProperties(apollo, {
+  pollingRetryPolicy: {
+    set (policy) {
+      PollingManager.policy = policy
+    }
+  },
+
+  DEFAULT_POLLING_RETRY_POLICY: {
+    value: DEFAULT_POLLING_RETRY_POLICY
+  }
+)
 
 module.exports = apollo

@@ -27,7 +27,7 @@ const RULES = {
     validate: isString,
     optional: true
   },
-  refreshInterval: {
+  fetchInterval: {
     validate: isNumber
   },
   updateNotification: {
@@ -86,7 +86,7 @@ module.exports = options => {
     namespace = DEFAULT_NAMESPACE,
     ip,
     dataCenter,
-    refreshInterval = DEFAULT_REFRESH_INTERVAL,
+    fetchInterval = DEFAULT_REFRESH_INTERVAL,
     fetchCachedConfig = true,
     updateNotification = true,
     cachePath
@@ -99,7 +99,7 @@ module.exports = options => {
     namespace,
     ip,
     dataCenter,
-    refreshInterval,
+    fetchInterval,
     fetchCachedConfig,
     updateNotification,
     cachePath

@@ -11,6 +11,10 @@ const EE = (name, type, desc = name, unit = 'a') => E(
   TypeError
 )
 
+E('FETCH_STATUS_ERROR', 'config service does not response 200, but got %s')
+
+E('POLLING_STATUS_ERROR', 'polling response status %s')
+
 EE('options', 'object', 'options', 'an')
 EE('host', 'string', 'options.host')
 EE('appId', 'string', 'options.appId')
@@ -48,6 +52,10 @@ EEE('READ_LOCAL_CACHE_FAILS',
   `${INITIAL_FETCH_FAILS}, and fails to read local cache file "%s"`)
 
 EEE('JSON_PARSE_ERROR', 'fails to parse JSON')
+
+EEE('POLLING_ERROR', 'polling request fails')
+
+EEE('POLLING_JSON_PARSE_ERROR', 'polling result fails to parse')
 
 module.exports = {
   error
