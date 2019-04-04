@@ -1,8 +1,6 @@
 const {format} = require('util')
-const {
-  Errors,
-  error: _error
-} = require('err-object')
+const {Errors} = require('err-object')
+
 const {E, error} = new Errors()
 
 const EE = (name, type, desc = name, unit = 'a') => E(
@@ -22,14 +20,13 @@ EE('cluster', 'string', 'options.cluster')
 EE('namespace', 'string', 'options.namespace')
 EE('ip', 'string', 'options.ip')
 EE('dataCenter', 'string', 'options.dataCenter')
-EE('refreshInterval', 'number', 'options.refreshInterval')
+EE('fetchInterval', 'number', 'options.refreshInterval')
 EE('updateNotification', 'boolean', 'options.updateNotification')
 EE('cachePath', 'string', 'options.cachePath')
 
 const EEE = (code, message) => E(code, {
   message
 }, ({
-  code,
   preset,
   args: [err, ...args]
 }) => {

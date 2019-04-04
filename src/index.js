@@ -42,8 +42,8 @@ const request = url => new Promise((resolve, reject) => {
       resolve({
         config: JSON.parse(body)
       })
-    } catch (err) {
-      reject(error('JSON_PARSE_ERROR', err))
+    } catch (parseError) {
+      reject(error('JSON_PARSE_ERROR', parseError))
     }
   })
 })
@@ -212,8 +212,8 @@ class ApolloClient extends EventEmitter {
       result = withCache
         ? await this._loadWithCache()
         : await this._loadWithNoCache()
-    } catch (error) {
-      this.emit('fetch-error', error)
+    } catch (err) {
+      this.emit('fetch-error', err)
       return
     }
 
@@ -230,7 +230,6 @@ class ApolloClient extends EventEmitter {
   }
 
   async ready () {
-    let config
     let fetchError
 
     try {
@@ -260,7 +259,7 @@ class ApolloClient extends EventEmitter {
 
     try {
       this._config = await fs.readJson(cacheFile)
-    } catch (error) {
+    } catch (err) {
       throw error('READ_LOCAL_CACHE_FAILS', err, cacheFile)
     }
 

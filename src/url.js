@@ -1,11 +1,5 @@
 const {stringify} = require('querystring')
 
-const makeNamespaceArray = n => Array.isArray(n)
-  ? n.length === 0
-    ? ['application']
-    : n
-  : [n]
-
 const isPlainObject = o => Object.keys(o).length === 0
 
 const createQuery = options => {

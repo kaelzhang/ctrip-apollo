@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "test": "nyc ava --verbose --timeout=10s test/*.test.js",
-    "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "eslint .",
+    "fix": "eslint . --fix"
   },
   "files": [
     "src/"
@@ -33,8 +35,9 @@
     "babel": false
   },
   "devDependencies": {
-    "ava": "^0.16.0",
+    "ava": "^1.4.1",
     "codecov": "^3.3.0",
+    "eslint": "^5.16.0",
     "eslint-config-ostai": "^3.0.0",
     "eslint-plugin-import": "^2.16.0",
     "nyc": "^13.3.0"

@@ -1,5 +1,7 @@
 const path = require('path')
-const {isObject, isString, isNumber, isBoolean} = require('core-util-is')
+const {
+  isObject, isString, isNumber, isBoolean
+} = require('core-util-is')
 const {error} = require('./error')
 
 const DEFAULT_CLUSTER = 'default'
@@ -30,10 +32,10 @@ const RULES = {
   fetchInterval: {
     validate: isNumber
   },
-  updateNotification: {
+  fetchCachedConfig: {
     validate: isBoolean
   },
-  fetchCachedConfig: {
+  updateNotification: {
     validate: isBoolean
   },
   cachePath: {
@@ -50,7 +52,6 @@ const ensureType = object => {
     const {
       validate,
       optional,
-      code,
       set
     } = RULES[key]
 
@@ -61,7 +62,6 @@ const ensureType = object => {
     }
 
     if (validate && !validate(v)) {
-      console.log('key', key, v)
       throw error(`INVALID_${key.toUpperCase()}`, v)
     }
 

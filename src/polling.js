@@ -3,7 +3,6 @@
 
 const EventEmitter = require('events')
 const log = require('util').debuglog('ctrip-apollo')
-const {parse} = require('querystring')
 const request = require('request')
 
 const {createKey} = require('./util')
@@ -97,9 +96,9 @@ class Polling extends EventEmitter {
 
       try {
         this._diff(JSON.parse(body))
-      } catch (err) {
+      } catch (parseError) {
         this._handleError(
-          error('POLLING_JSON_PARSE_ERROR', err),
+          error('POLLING_JSON_PARSE_ERROR', parseError),
           retries
         )
       }
@@ -109,11 +108,13 @@ class Polling extends EventEmitter {
   _handleError (err, retries) {
     log('polling: error, code: %s, stack: %s', err.code, err.stack)
 
+    /* eslint-disable no-use-before-define */
     const {
       delay = 0,
       reset,
       abandon
     } = PollingManager.pollingRetryPolicy(retries)
+    /* eslint-enable no-use-before-define */
 
     if (abandon) {
       this._abandoned = true
