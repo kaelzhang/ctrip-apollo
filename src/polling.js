@@ -64,9 +64,14 @@ class Polling extends EventEmitter {
     })
 
     log('polling: request %s', decodeURIComponent(url))
+    const start = Date.now()
 
     request(url, (err, response) => {
-      log('polling: responses')
+      log(
+        'polling: responses cost: %s ms, body: %s',
+        Date.now() - start,
+        response.body
+      )
 
       if (err) {
         return this._handleError(

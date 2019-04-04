@@ -104,8 +104,11 @@ class ApolloClient extends EventEmitter {
         return
       }
 
-      log('client: receive update, start to fetch')
-      this._fetch(this._options.fetchCachedConfig)
+      log('client: receive update, start to fetch with no cache')
+
+      // Always fetch non-cached configurations when received update event,
+      // because we need to fetch the latest configs
+      this._fetch(false)
     })
 
     polling.on('abandon', () => {
@@ -206,14 +209,15 @@ class ApolloClient extends EventEmitter {
   async _fetch (withCache) {
     let result
     try {
-      result = await withCache
-        ? this._loadWithCache()
-        : this._load()
+      result = withCache
+        ? await this._loadWithCache()
+        : await this._loadWithNoCache()
     } catch (error) {
       this.emit('fetch-error', error)
       return
     }
 
+    log('client: start diff: %j', result)
     this._diffAndSave(result)
   }
 
