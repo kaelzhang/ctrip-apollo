@@ -15,7 +15,14 @@
 
 # ctrip-apollo
 
-The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service.
+The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service, which
+
+- **With easy-to-use APIs** that just leave everything else to `ctrip-apollo`
+- **Implements update notifications** by using HTTP long polling, and handles all kinds of network errors.
+- **Supports custom retry policy for polling**
+- **Implements disk cache** to against the situation that all config services are down.
+
+`ctrip-apollo` directly uses `async/await` and requires node >= 7.10.1
 
 ## Install
 
@@ -47,14 +54,16 @@ console.log(client.get('portal.elastic.cluster.name'))
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
-  - **updateNotification?** `boolean=true` set to `true` to enable update notification by using HTTP long polling.
+  - **updateNotification?** `boolean=true` set to `false` to disable update notification.
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
 
-Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)
+Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter).
 
 ### options.updateNotification
 
 If `options.updateNotification` is enabled, `options.fetchInterval` will be disabled unless polling is [abandoned](https://github.com/kaelzhang/ctrip-apollo#apollopollingretrypolicy-functionretries-pollingretrypolicy).
+
+Make sure the timeout of your gateway is configured more than 60 seconds, [via](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#142-http%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E)
 
 ### await client.ready()
 
@@ -89,6 +98,8 @@ Creates and returns a new `ApolloClient` with `namespace`. If the given `namespa
 ```js
 const ns = client.namespace('web')
 ```
+
+## Events
 
 ### Event: `'change'`
 
@@ -144,6 +155,8 @@ interface PollingRetryPolicy {
 The default `apollo.pollingRetryPolicy` is equivalent to:
 
 ```js
+// It will reset the `retries` counter after the 6th retry.
+// Schedule the first retry in 10 seconds, and adds extra 10s delay everytime.
 apollo.pollingRetryPolicy = apollo.DEFAULT_POLLING_RETRY_POLICY
 ```
 
@@ -153,9 +166,53 @@ And we can define our own policy
 apollo.pollingRetryPolicy = retries => ({
   // Stop polling after 11(the first and the latter 10 retries) errors
   abandon: retries >= 10,
+  // Longer and longer delays
   delay: retries * 10 * 1000
+  // And no reset
 })
 ```
+
+## Examples
+
+### Initialize with namespace
+
+```js
+const client = apollo({
+  host,
+  appId,
+  namespace: 'my-namespace',
+
+  // Save local cache to the current directory
+  cachePath: __dirname
+})
+
+await client.ready()
+
+client.config()
+```
+
+### Disable update notifications(HTTP long polling)
+
+and fetch configurations on every minutes
+
+```js
+const client = apollo({
+  host,
+  appId,
+  namespace,
+  updateNotification: false,
+  fetchInterval: 60 * 1000
+})
+
+client.ready()
+.then(() => {
+  console.log(client.get('portal.elastic.cluster.name'))
+  // might be:
+  // hermes-es-fws
+})
+```
+
+###
 
 ## License
 
