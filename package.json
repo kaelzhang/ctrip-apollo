@@ -35,6 +35,8 @@
   "devDependencies": {
     "ava": "^0.16.0",
     "codecov": "^3.3.0",
+    "eslint-config-ostai": "^3.0.0",
+    "eslint-plugin-import": "^2.16.0",
     "nyc": "^13.3.0"
   },
   "dependencies": {

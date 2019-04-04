@@ -11,7 +11,7 @@ const {
 } = require('./helper')
 
 const request = url => new Promise((resolve, reject) => {
-  request(url, (err, response) => {
+  req(url, (err, response) => {
     if (err) {
       return reject(error('FETCH_REQUEST_ERROR', err))
     }
@@ -24,12 +24,20 @@ const request = url => new Promise((resolve, reject) => {
       })
     }
 
-    const config = body
-    resolve({
-      config
-    })
+    try {
+      resolve({
+        config: JSON.parse(body)
+      })
+    } catch (err) {
+      reject(error('JSON_PARSE_ERROR', err))
+    }
   })
 })
+
+const CONVERTER = {
+  CACHE: json => json,
+  NO_CACHE: json => json.configurations
+}
 
 class ApolloClient extends EventEmitter {
   constructor (options) {
@@ -39,71 +47,6 @@ class ApolloClient extends EventEmitter {
     this._releaseKey = null
     this._fetchCachedConfig = this._options.fetchCachedConfig
     this._cacheFile = this._createCacheFile()
-  }
-
-  _load () {
-    const url = queryConfig({
-      ...this._options,
-      releaseKey: this._releaseKey
-    })
-    return request(url)
-  }
-
-  _loadWithCache () {
-    const url = queryConfigAsJson(this._options)
-    return request(url)
-  }
-
-  async _fetch () {
-    let result
-    try {
-      result = await this._fetchCachedConfig
-        ? this._loadWithCache()
-        : this._load()
-    } catch (error) {
-      this.emit('fetch-error', error)
-      return
-    }
-
-    this._diffAndSave(result)
-  }
-
-  _diffAndSave ({
-    noChange,
-    config
-  }) {
-    if (noChange) {
-      return
-    }
-
-    Object.keys(config).forEach(key => {
-      const oldValue = this._config[key]
-      const newValue = config[key]
-
-      if (oldValue === newValue) {
-        return
-      }
-
-      this.emit('change', {
-        oldValue,
-        newValue,
-        key
-      })
-    })
-
-    // Directly set the new value,
-    // so that we need not to deal with deleted keys
-    this._config = config
-
-    const cacheFile = this._cacheFile
-    if (!cacheFile) {
-      return
-    }
-
-    // Save asynchronously
-    fs.outputJson(cacheFile, config, err => {
-      this.emit('save-error', err)
-    })
   }
 
   _createCacheFile () {
@@ -134,6 +77,100 @@ class ApolloClient extends EventEmitter {
     return path.join(cachePath, encoded)
   }
 
+  async _load (url, converter) {
+    const {
+      noChange,
+      config
+    } = await request(url)
+
+    if (noChange) {
+      return {
+        noChange
+      }
+    }
+
+    const {
+      releaseKey
+    } = config
+
+    if (releaseKey) {
+      this._releaseKey = releaseKey
+    }
+
+    return {
+      config: converter(config)
+    }
+  }
+
+  _loadWithNoCache () {
+    const url = queryConfig({
+      ...this._options,
+      releaseKey: this._releaseKey
+    })
+
+    return this._load(url, CONVERTER.NO_CACHE)
+  }
+
+  _loadWithCache () {
+    const url = queryConfigAsJson(this._options)
+    return this._load(url, CONVERTER.CACHE)
+  }
+
+  _save () {
+    const cacheFile = this._cacheFile
+    if (!cacheFile) {
+      return
+    }
+
+    // Save asynchronously
+    fs.outputJson(cacheFile, this._config, err => {
+      this.emit('save-error', err)
+    })
+  }
+
+  _diffAndSave ({
+    noChange,
+    config
+  }) {
+    if (noChange) {
+      return
+    }
+
+    Object.keys(config).forEach(key => {
+      const oldValue = this._config[key]
+      const newValue = config[key]
+
+      if (oldValue === newValue) {
+        return
+      }
+
+      this.emit('change', {
+        oldValue,
+        newValue,
+        key
+      })
+    })
+
+    // Directly set the new value,
+    // so that we need not to handle with deleted keys
+    this._config = config
+    this._save()
+  }
+
+  async _fetch (withCache) {
+    let result
+    try {
+      result = await withCache
+        ? this._loadWithCache()
+        : this._load()
+    } catch (error) {
+      this.emit('fetch-error', error)
+      return
+    }
+
+    this._diffAndSave(result)
+  }
+
   async ready () {
     let config
     let fetchError
@@ -141,7 +178,7 @@ class ApolloClient extends EventEmitter {
     try {
       ({
         config: this._config
-      } = await this._load())
+      } = await this._loadWithNoCache())
       return
     } catch (err) {
       this.emit('fetch-error', err)
@@ -168,6 +205,8 @@ class ApolloClient extends EventEmitter {
     } catch (error) {
       throw error('READ_LOCAL_CACHE_FAILS', err, cacheFile)
     }
+
+    this._save()
   }
 
   config () {
@@ -194,7 +233,7 @@ class ApolloClient extends EventEmitter {
   }
 }
 
-const apollo = options => new ApolloClient()
+const apollo = options => new ApolloClient(options)
 
 apollo.ApolloClient = ApolloClient
 

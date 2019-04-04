@@ -30,7 +30,7 @@ const RULES = {
   refreshInterval: {
     validate: isNumber
   },
-  longPolling: {
+  updateNotification: {
     validate: isBoolean
   },
   fetchCachedConfig: {
@@ -61,6 +61,7 @@ const ensureType = object => {
     }
 
     if (validate && !validate(v)) {
+      console.log('key', key, v)
       throw error(`INVALID_${key.toUpperCase()}`, v)
     }
 
@@ -86,7 +87,8 @@ module.exports = options => {
     ip,
     dataCenter,
     refreshInterval = DEFAULT_REFRESH_INTERVAL,
-    longPolling = true,
+    fetchCachedConfig = true,
+    updateNotification = true,
     cachePath
   } = options
 
@@ -98,7 +100,8 @@ module.exports = options => {
     ip,
     dataCenter,
     refreshInterval,
-    longPolling,
+    fetchCachedConfig,
+    updateNotification,
     cachePath
   })
 }

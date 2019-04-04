@@ -15,7 +15,7 @@
 
 # ctrip-apollo
 
-The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo)
+The most delightful and handy Node.js client for ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service.
 
 ## Install
 
@@ -34,6 +34,8 @@ const client = apollo({
 })
 
 await client.ready()
+
+console.log(client.get('portal.elastic.cluster.name'))
 ```
 
 ## apollo(options)
@@ -45,7 +47,7 @@ await client.ready()
   - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **refreshInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
-  - **updateNotification?** `boolean=false` set to `true` to enable update notification by using HTTP long polling.
+  - **updateNotification?** `boolean=true` set to `true` to enable update notification by using HTTP long polling.
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
 
 Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter)

@@ -7,11 +7,11 @@ const {E, error} = new Errors()
 
 const EE = (name, type, desc = name, unit = 'a') => E(
   `INVALID_${name.toUpperCase()}`,
-  `${desc} must be ${unit} ${type}`,
+  `${desc} must be ${unit} ${type}, but got %s`,
   TypeError
 )
 
-EE('options', 'object', 'an')
+EE('options', 'object', 'options', 'an')
 EE('host', 'string', 'options.host')
 EE('appId', 'string', 'options.appId')
 EE('cluster', 'string', 'options.cluster')
@@ -19,10 +19,10 @@ EE('namespace', 'string', 'options.namespace')
 EE('ip', 'string', 'options.ip')
 EE('dataCenter', 'string', 'options.dataCenter')
 EE('refreshInterval', 'number', 'options.refreshInterval')
-EE('longPolling', 'boolean', 'options.longPolling')
+EE('updateNotification', 'boolean', 'options.updateNotification')
 EE('cachePath', 'string', 'options.cachePath')
 
-const EEE = (code, message) => E('FETCH_REQUEST_ERROR', {
+const EEE = (code, message) => E(code, {
   message
 }, ({
   code,
@@ -46,6 +46,8 @@ EEE('NO_LOCAL_CACHE_FOUND', `${
 
 EEE('READ_LOCAL_CACHE_FAILS',
   `${INITIAL_FETCH_FAILS}, and fails to read local cache file "%s"`)
+
+EEE('JSON_PARSE_ERROR', 'fails to parse JSON')
 
 module.exports = {
   error
