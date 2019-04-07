@@ -74,7 +74,7 @@ const ensureType = object => {
   return object
 }
 
-module.exports = options => {
+const checkOptions = options => {
   if (!isObject(options)) {
     throw error('INVALID_OPTIONS', options)
   }
@@ -104,4 +104,11 @@ module.exports = options => {
     updateNotification,
     cachePath
   })
+}
+
+const AVAILABLE_OPTIONS = Object.keys(RULES)
+
+module.exports = {
+  checkOptions,
+  AVAILABLE_OPTIONS
 }

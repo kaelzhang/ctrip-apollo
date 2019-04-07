@@ -4,7 +4,10 @@ const log = require('util').debuglog('ctrip-apollo')
 const req = require('request')
 const fs = require('fs-extra')
 
-const checkOptions = require('./options')
+const {
+  checkOptions,
+  AVAILABLE_OPTIONS
+} = require('./options')
 const {createKey} = require('./util')
 const {error} = require('./error')
 const {
@@ -303,6 +306,10 @@ Object.defineProperties(apollo, {
 
   DEFAULT_POLLING_RETRY_POLICY: {
     value: DEFAULT_POLLING_RETRY_POLICY
+  },
+
+  AVAILABLE_OPTIONS: {
+    value: AVAILABLE_OPTIONS
   }
 })
 

@@ -2,7 +2,7 @@ const test = require('ava')
 const apollo = require('..')
 
 const host = 'http://localhost:8070'
-const appId = 'apollo'
+// const appId = 'apollo'
 
 const CASES = [
   [null, 'INVALID_OPTIONS'],

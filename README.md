@@ -126,7 +126,7 @@ Emits if it fails to fetch configurations
 
 Emits if it fails to save configurations to local cache file
 
-## apollo.pollingRetryPolicy `Function(retries): PollingRetryPolicy`
+### apollo.pollingRetryPolicy `Function(retries): PollingRetryPolicy`
 
 `apollo.pollingRetryPolicy` is a setter to change the global policy to tell the system what to do next if an error occured when polling update notifications.
 
@@ -172,6 +172,10 @@ apollo.pollingRetryPolicy = retries => ({
   // And no reset
 })
 ```
+
+### apollo.AVAILABLE_OPTIONS `Array`
+
+List of available option keys.
 
 ## Examples
 
