@@ -90,15 +90,25 @@ Returns the config value of the corresponding key `key`
 console.log('config for host', client.get('host'))
 ```
 
-### client.namespace(namespace)
+### client.newNamespace(namespace)
 
 - **namespace** `string` namespace name
 
 Creates and returns a new `ApolloClient` with `namespace`. If the given `namespace` is equivalent to the namespace of `client`, `this` object will be returned.
 
 ```js
-const ns = client.namespace('web')
+const ns = client.newNamespace('web')
 ```
+
+## Getters
+
+### Getter: client.namespace
+
+Returns `string` the current namespace of the `client`
+
+### Getter: client.cluster
+
+Returns `string` the current cluster of the `client`
 
 ## Events
 

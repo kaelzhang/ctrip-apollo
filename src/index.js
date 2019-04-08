@@ -72,6 +72,14 @@ class ApolloClient extends EventEmitter {
       : this._initFetch()
   }
 
+  get namespace () {
+    return this._options.namespace
+  }
+
+  get cluster () {
+    return this._options.cluster
+  }
+
   _createCacheFile () {
     const {
       cachePath
@@ -279,7 +287,7 @@ class ApolloClient extends EventEmitter {
     return this._config[key]
   }
 
-  namespace (namespace) {
+  newNamespace (namespace) {
     if (namespace === this._options.namespace) {
       return this
     }
