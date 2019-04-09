@@ -1,13 +1,14 @@
 {
   "name": "ctrip-apollo",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc ava --verbose --timeout=10s test/*.test.js",
+    "test": "NODE_DEBUG=ctrip-apollo nyc ava --verbose --timeout=10s test/*.test.js",
     "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint .",
-    "fix": "eslint . --fix"
+    "fix": "eslint . --fix",
+    "debug": "NODE_DEBUG=ctrip-apollo node no-track"
   },
   "files": [
     "src/"

@@ -11,6 +11,9 @@ const {error} = require('./error')
 
 const DEFAULT_NAMESPACE = 'application'
 
+// TIMEOUT SHOULD LONGER THAN 60s
+const POLLING_TIMEOUT = 70 * 1000
+
 class Polling extends EventEmitter {
   constructor (options) {
     super()
@@ -65,7 +68,9 @@ class Polling extends EventEmitter {
     log('polling: request %s', decodeURIComponent(url))
     const start = Date.now()
 
-    request(url, (err, response) => {
+    request(url, {
+      timeout: POLLING_TIMEOUT
+    }, (err, response) => {
       log('polling: responses cost: %s ms', Date.now() - start)
 
       if (err) {
@@ -88,6 +93,7 @@ class Polling extends EventEmitter {
       }
 
       if (status !== 200) {
+        log('polling: response error, body: %s', body)
         return this._handleError(
           error('POLLING_STATUS_ERROR', status),
           retries

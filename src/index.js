@@ -112,6 +112,7 @@ class ApolloClient extends EventEmitter {
 
     polling.on('update', namespace => {
       if (namespace !== this._options.namespace) {
+        log('client: skip initial polling update')
         return
       }
 
