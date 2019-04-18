@@ -15,7 +15,7 @@
 
 # ctrip-apollo
 
-The most delightful and handy Node.js client for Ctrip [apollo](https://github.com/ctripcorp/apollo) configuration service, which
+The most delightful and handy Node.js client for Ctrip's [apollo](https://github.com/ctripcorp/apollo) configuration service, which
 
 - **Provides easy-to-use APIs** that just leave everything else to `ctrip-apollo`
 - **Implements update notifications** by using HTTP long polling, and handles all kinds of network errors.
@@ -49,11 +49,76 @@ await namespace.ready()
 console.log(namespace.get('portal.elastic.cluster.name'))
 ```
 
+## Examples
+
+### Initialize with namespace
+
+```js
+const ns = apollo({
+  host,
+  appId,
+
+  // Save local cache to the current directory
+  cachePath: __dirname
+})
+.ns('my-namespace')
+
+await ns.ready()
+
+console.log(ns.config())
+// {
+//   'portal.elastic.document.type': 'biz',
+//   'portal.elastic.cluster.name': 'hermes-es-fws'
+// }
+```
+
+### Disable update notifications(HTTP long polling)
+
+and enable fetching on every 3 minutes
+
+```js
+const app = apollo({
+  host,
+  appId,
+  enableUpdateNotification: false,
+  enableFetch: true,
+  fetchInterval: 3 * 60 * 1000
+})
+
+client.ready()
+.then(() => {
+  console.log(client.get('portal.elastic.cluster.name'))
+  // might be:
+  // hermes-es-fws
+})
+```
+
+### Chainable
+
+```js
+
+const ns = await apollo({
+  host,
+  appId
+})
+.cluster('ap-northeast-1')
+.enableUpdateNotification(true)
+.namespace('account-service')
+.enableFetch(false)
+.ready()
+
+console.log(ns.get('account.graphql.cluster.name'))
+// might be:
+// graph-us-3
+```
+
+# APIs
+
 ## app `ApolloApplication`
 
 An application can have one or more clusters
 
-### apollo(options)
+### apollo(options): ApolloApplication
 
 - **options** `Object`
 
@@ -65,7 +130,7 @@ Essential options:
 
 Optional options:
   - **enableFetch?** `boolean=false` set to `true` to enable the feature
-  - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
+  - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Defaults to `5` minutes. Setting this option to `0` will disable the feature.
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
   - **skipInitFetchIfCacheFound?** `boolean=false` whether a namespace should skip the initial fetching if the corresponding cache is found on disk.
@@ -84,7 +149,7 @@ Make sure the timeout of your gateway is configured more than 60 seconds, [via](
 
 If `options.enableFetch` is set to `true` (default value is `false`), all namespaces will fetch new configurations on every time period of `options.fetchInterval`
 
-### app.cluster(clusterName?)
+### app.cluster(clusterName?): ApolloCluster
 
 - **clusterName?** `string='default'` the cluster name. The cluster name defaults to `'default'`
 
@@ -92,7 +157,7 @@ Creates a new cluster under the current application.
 
 Returns `ApolloCluster`
 
-### app.namespace(namespaceName?)
+### app.namespace(namespaceName?): ApolloNamespace
 
 - **namespaceName?** `string='application'` the optional namespace name which defaults to `'application'` which is the default namespace name of Ctrip's Apollo config service.
 
@@ -104,7 +169,7 @@ Returns `ApolloNamespace`.
 
 A cluster can have one or more namespaces. And all namespaces of the same cluster use a single polling manager to receive update notifications.
 
-### cluster.namespace(namespaceName?)
+### cluster.namespace(namespaceName?): ApolloNamespace
 
 - **namespaceName?** `string='application'`
 
@@ -112,11 +177,11 @@ Creates a new namespace of the current cluster.
 
 Returns `ApolloNamespace`
 
-### cluster.enableUpdateNotification(enable)
+### cluster.enableUpdateNotification(enable): this
 
 - **enable** `boolean`
 
-Enable or disable the updateNotification
+Enable or disable the updateNotification. Returns `this`
 
 ```js
 // Get the default cluster, which is equivalent to
@@ -131,13 +196,13 @@ cluster.enableUpdateNotification(false)
 
 A namespace is what a configuration key belongs to.
 
-### await namespace.ready()
+### await namespace.ready(): this
 
 Fetch the configuration from config service for the first time or fallback to local cache file.
 
 **MAKE SURE** we await `namespace.ready()` before any `namespace.config()` or `namespace.get()` methods are invoked.
 
-### namespace.config()
+### namespace.config(): Object
 
 Returns `Object` all configurations for the current namespace / application.
 
@@ -147,7 +212,7 @@ Notice that, all configuration getters of a namespace are synchronous methods
 console.log('application config', namespace.config())
 ```
 
-### namespace.get(key)
+### namespace.get(key): string
 
 - **key** `string` config key name
 
@@ -157,7 +222,7 @@ Returns the config value of the corresponding key `key`
 console.log('config for host', namespace.get('host'))
 ```
 
-### namespace.enableFetch(enable)
+### namespace.enableFetch(enable): this
 
 - **enable** `boolean`
 
@@ -173,7 +238,7 @@ Returns `string` the namespace name
 
 Returns `string` the cluster name
 
-## Events
+## Namespace Events
 
 ### Event: `'change'`
 
@@ -249,50 +314,6 @@ apollo.pollingRetryPolicy = retries => ({
 ### apollo.AVAILABLE_OPTIONS `Array`
 
 List of available option keys.
-
-## Examples
-
-### Initialize with namespace
-
-```js
-const ns = apollo({
-  host,
-  appId,
-
-  // Save local cache to the current directory
-  cachePath: __dirname
-})
-.ns('my-namespace')
-
-await ns.ready()
-
-console.log(ns.config())
-// {
-//   'portal.elastic.document.type': 'biz',
-//   'portal.elastic.cluster.name': 'hermes-es-fws'
-// }
-```
-
-### Disable update notifications(HTTP long polling)
-
-and enable fetching on every 3 minutes
-
-```js
-const app = apollo({
-  host,
-  appId,
-  enableUpdateNotification: false,
-  enableFetch: true,
-  fetchInterval: 3 * 60 * 1000
-})
-
-client.ready()
-.then(() => {
-  console.log(client.get('portal.elastic.cluster.name'))
-  // might be:
-  // hermes-es-fws
-})
-```
 
 ## License
 
