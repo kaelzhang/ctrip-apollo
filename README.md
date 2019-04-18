@@ -125,10 +125,9 @@ An application can have one or more clusters
 Essential options:
   - **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
   - **appId** `string` apollo application id
-  - **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
-
 
 Optional options:
+  - **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
   - **enableFetch?** `boolean=false` set to `true` to enable the feature
   - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Defaults to `5` minutes. Setting this option to `0` will disable the feature.
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
@@ -198,7 +197,9 @@ A namespace is what a configuration key belongs to.
 
 ### await namespace.ready(): this
 
-Fetch the configuration from config service for the first time or fallback to local cache file.
+Read the local cache file if exists, and fetch the configuration from config service for the first time if `options.skipInitFetchIfCacheFound` is set to `false` (the default value).
+
+If there is no cache file and it fails to fetch configurations, this method will reject.
 
 **MAKE SURE** we await `namespace.ready()` before any `namespace.config()` or `namespace.get()` methods are invoked.
 
@@ -233,6 +234,10 @@ Enable or disable fetching in every `options.fetchInterval`
 ### Getter: namespace.namespace
 
 Returns `string` the namespace name
+
+### Getter: namespace.cluster
+
+Returns `string` name of the cluster which the current namespace belongs to
 
 ### Getter: cluster.cluster
 

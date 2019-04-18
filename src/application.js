@@ -17,7 +17,7 @@ module.exports = class ApolloApplication {
 
   cluster (cluster = DEFAULT_CLUSTER) {
     if (!isString(cluster)) {
-      throw error('INVALID_CLUSTER', cluster)
+      throw error('INVALID_CLUSTER_NAME', cluster)
     }
 
     if (cluster in this._clusters) {
