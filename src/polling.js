@@ -5,18 +5,18 @@ const EventEmitter = require('events')
 const log = require('util').debuglog('ctrip-apollo')
 const request = require('request')
 
-const {createKey} = require('./util')
 const {queryUpdate} = require('./url')
 const {error} = require('./error')
-
-const DEFAULT_NAMESPACE = 'application'
+const {
+  DEFAULT_NAMESPACE
+} = require('./options')
 
 // TIMEOUT SHOULD LONGER THAN 60s
 const POLLING_TIMEOUT = 70 * 1000
 
 // All namespaces of the same cluster use a single Polling
 class Polling extends EventEmitter {
-  constructor (options) {
+  constructor (options, enabled) {
     super()
 
     this._options = options
@@ -24,18 +24,32 @@ class Polling extends EventEmitter {
     this._notificationIds = Object.create(null)
     this._abandoned = false
     this._started = false
+
+    this.enable(enabled)
   }
 
-  addNamespace (namespace) {
-    this._ns.add(namespace)
+  enable (enable) {
+    this._enabled = enable
 
+    if (enable) {
+      this._check()
+    }
+  }
+
+  _check () {
     if (
-      this._ns.size > 0
+      this._enabled
+      && this._ns.size > 0
       && !this._abandoned
       && !this._started
     ) {
       this.start()
     }
+  }
+
+  addNamespace (namespace) {
+    this._ns.add(namespace)
+    this._check()
   }
 
   _getNotifications () {
@@ -63,6 +77,12 @@ class Polling extends EventEmitter {
   }
 
   _start (retries) {
+    if (this._enabled) {
+      // Stop polling when it is disabled
+      this._started = false
+      return
+    }
+
     this._started = true
 
     const url = queryUpdate({
@@ -119,16 +139,17 @@ class Polling extends EventEmitter {
   _handleError (err, retries) {
     log('polling: error, code: %s, stack: %s', err.code, err.stack)
 
-    /* eslint-disable no-use-before-define */
     const {
       delay = 0,
       reset,
       abandon
-    } = PollingManager.pollingRetryPolicy(retries)
-    /* eslint-enable no-use-before-define */
+    } = this._options.pollingRetryPolicy(retries)
 
     if (abandon) {
       this._abandoned = true
+
+      // Mark as stopped when abandon
+      this._started = false
       this.emit('abandon')
       return
     }
@@ -171,50 +192,6 @@ class Polling extends EventEmitter {
   }
 }
 
-const ATOM_RETRY_DELAY = 10 * 1000
-const DEFAULT_POLLING_RETRY_POLICY = retries => {
-  const ret = {
-    delay: retries * ATOM_RETRY_DELAY,
-    reset: false
-  }
-
-  // Longer than 60 is non-sense,
-  // because the max response time of
-  if (retries >= 6) {
-    ret.reset = true
-  }
-
-  return ret
-}
-
-class PollingManager {
-  constructor () {
-    this._polling = Object.create(null)
-  }
-
-  register ({
-    host,
-    appId,
-    cluster
-  }) {
-    const key = createKey(host, appId, cluster)
-    const polling = this._polling[key]
-    if (polling) {
-      return polling
-    }
-
-    return this._polling[key] = new Polling({
-      host,
-      appId,
-      cluster
-    })
-  }
-}
-
-PollingManager.pollingRetryPolicy = DEFAULT_POLLING_RETRY_POLICY
-
 module.exports = {
-  manager: new PollingManager(),
-  PollingManager,
-  DEFAULT_POLLING_RETRY_POLICY
+  Polling
 }

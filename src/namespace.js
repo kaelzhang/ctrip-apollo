@@ -48,7 +48,7 @@ const CONVERTER = {
 const NOOP = () => {}
 
 class ApolloNamespace extends EventEmitter {
-  constructor (options, polling) {
+  constructor (options) {
     super()
 
     this._options = options
@@ -56,7 +56,6 @@ class ApolloNamespace extends EventEmitter {
     this._releaseKey = null
     this._cacheFile = this._createCacheFile()
 
-    this._polling = polling
     this._fetchTimer = null
     this._ready = false
   }
@@ -137,7 +136,7 @@ class ApolloNamespace extends EventEmitter {
     return this._load(url, CONVERTER.CACHE)
   }
 
-  async save () {
+  _save () {
     const cacheFile = this._cacheFile
     if (!cacheFile) {
       return
@@ -151,12 +150,9 @@ class ApolloNamespace extends EventEmitter {
         return
       }
 
+      this.emit('saved')
       log('client: save success')
     })
-  }
-
-  _saveInBackground () {
-
   }
 
   _diffAndSave ({
@@ -188,7 +184,7 @@ class ApolloNamespace extends EventEmitter {
     this._save()
   }
 
-  async _fetch (withCache) {
+  async fetch (withCache) {
     let result
     try {
       result = withCache
@@ -203,14 +199,6 @@ class ApolloNamespace extends EventEmitter {
     this._diffAndSave(result)
   }
 
-  _initDone (save) {
-    this._polling.addNamespace(this._options.namespace)
-
-    if (save) {
-      this._save()
-    }
-  }
-
   async ready () {
     this._options.skipInitFetchIfCacheFound
       ? await this._readOrFetch()
@@ -222,6 +210,8 @@ class ApolloNamespace extends EventEmitter {
 
     this._checkReady = NOOP
     this._ready = true
+
+    this.emit('ready')
 
     return this
   }
@@ -252,7 +242,7 @@ class ApolloNamespace extends EventEmitter {
     } = await this._loadWithNoCache()
 
     this._config = config
-    this._initDone(true)
+    this._save()
   }
 
   async _readOrFetch () {
@@ -266,7 +256,6 @@ class ApolloNamespace extends EventEmitter {
 
     if (this._config) {
       log('cache found, skip fetching')
-      this._initDone()
       return
     }
 
@@ -305,8 +294,6 @@ class ApolloNamespace extends EventEmitter {
     if (!this._config) {
       throw error('INIT_FETCH_FAILS', fetchError)
     }
-
-    this._initDone()
   }
 
   _checkReady (name) {
@@ -346,7 +333,7 @@ class ApolloNamespace extends EventEmitter {
         return
       }
 
-      this._fetch(options.fetchCachedConfig)
+      this.fetch(options.fetchCachedConfig)
     }, options.fetchInterval)
   }
 

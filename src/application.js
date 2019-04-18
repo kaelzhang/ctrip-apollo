@@ -1,36 +1,22 @@
-const {isString} = require('core-util-is')
-
 const {
   checkOptions,
-  DEFAULT_CLUSTER,
-  DEFAULT_NAMESPACE
+  DEFAULT_CLUSTER
 } = require('./options')
-const {error} = require('./error')
+const {Base} = require('./util')
 
 const {ApolloCluster} = require('./cluster')
 
-module.exports = class ApolloApplication {
+module.exports = class ApolloApplication extends Base {
   constructor (options) {
-    this._options = checkOptions(options)
-    this._clusters = Object.create(null)
+    super(checkOptions(options),
+      ApolloCluster, 'cluster', 'INVALID_CLUSTER_NAME')
   }
 
   cluster (cluster = DEFAULT_CLUSTER) {
-    if (!isString(cluster)) {
-      throw error('INVALID_CLUSTER_NAME', cluster)
-    }
-
-    if (cluster in this._clusters) {
-      return this._clusters[cluster]
-    }
-
-    return this._clusters[cluster] = new ApolloCluster({
-      ...this._options,
-      cluster
-    })
+    return this._child(cluster)
   }
 
-  namespace (namespace = DEFAULT_NAMESPACE) {
+  namespace (namespace) {
     return this.cluster().namespace(namespace)
   }
 }

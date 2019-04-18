@@ -97,15 +97,12 @@ client.ready()
 
 ```js
 
-const ns = await apollo({
-  host,
-  appId
-})
-.cluster('ap-northeast-1')
-.enableUpdateNotification(true)
-.namespace('account-service')
-.enableFetch(false)
-.ready()
+const ns = await apollo({host, appId})  // <-- app
+.cluster('ap-northeast-1')              // <-- cluster
+.enableUpdateNotification(true)         // <-- cluster
+.namespace('account-service')           // <-- namespace
+.enableFetch(false)                     // <-- namespace
+.ready()                                // <-- Promise {namespace}
 
 console.log(ns.get('account.graphql.cluster.name'))
 // might be:
@@ -128,6 +125,7 @@ Essential options:
 
 Optional options:
   - **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
+  - **pollingRetryPolicy?** [`PollingRetryPolicy=apollo.DEFAULT_POLLING_RETRY_POLICY`](#pollingretrypolicy)
   - **enableFetch?** `boolean=false` set to `true` to enable the feature
   - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Defaults to `5` minutes. Setting this option to `0` will disable the feature.
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
@@ -269,16 +267,18 @@ Emits if it fails to fetch configurations
 
 Emits if it fails to save configurations to local cache file
 
-### apollo.pollingRetryPolicy `Function(retries): PollingRetryPolicy`
+### PollingRetryPolicy
 
-`apollo.pollingRetryPolicy` is a setter to change the global policy to tell the system what to do next if an error occured when polling update notifications.
+`PollingRetryPolicy` is to tell the system what to do next if an error occured when receiving update notifications.
 
-`apollo.pollingRetryPolicy` accepts a `Function(retries)` which returns an interface of `PollingRetryPolicy`
+```ts
+type PollingRetryPolicy = Function(retries): PollingRetryDirective
+```
 
 - **retries** `number` how many times has retried till the last error.
 
 ```ts
-interface PollingRetryPolicy {
+interface PollingRetryDirective {
   // `abandon: true` ignores all properties below
   // and stops update notification polling which is a dangerous directive
   // After that,
@@ -296,23 +296,28 @@ interface PollingRetryPolicy {
 // If there is no properties set, it will retry immediately.
 ```
 
-The default `apollo.pollingRetryPolicy` is equivalent to:
+The default `pollingRetryPolicy` is equivalent to:
 
 ```js
 // It will reset the `retries` counter after the 6th retry.
 // Schedule the first retry in 10 seconds, and adds extra 10s delay everytime.
-apollo.pollingRetryPolicy = apollo.DEFAULT_POLLING_RETRY_POLICY
+const {DEFAULT_POLLING_RETRY_POLICY} = require('ctrip-apollo')
 ```
 
 And we can define our own policy
 
 ```js
-apollo.pollingRetryPolicy = retries => ({
+const pollingRetryPolicy = retries => ({
   // Stop polling after 11(the first and the latter 10 retries) errors
   abandon: retries >= 10,
   // Longer and longer delays
   delay: retries * 10 * 1000
   // And no reset
+})
+
+const app = apollo({
+  ...,
+  pollingRetryPolicy
 })
 ```
 

@@ -40,12 +40,12 @@
     "codecov": "^3.3.0",
     "eslint": "^5.16.0",
     "eslint-config-ostai": "^3.0.0",
-    "eslint-plugin-import": "^2.16.0",
-    "nyc": "^13.3.0"
+    "eslint-plugin-import": "^2.17.2",
+    "nyc": "^14.0.0"
   },
   "dependencies": {
     "core-util-is": "^1.0.2",
-    "err-object": "^4.1.0",
+    "err-object": "^4.3.1",
     "fs-extra": "^7.0.1",
     "request": "^2.88.0",
     "skema": "^9.4.1"

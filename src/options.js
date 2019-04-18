@@ -1,12 +1,28 @@
 const path = require('path')
 const {
-  isObject, isString, isNumber, isBoolean
+  isObject, isString, isNumber, isBoolean, isFunction
 } = require('core-util-is')
 const {error} = require('./error')
 
 const DEFAULT_CLUSTER = 'default'
 const DEFAULT_NAMESPACE = 'application'
 const DEFAULT_REFRESH_INTERVAL = 5 * 60 * 1000
+
+const ATOM_RETRY_DELAY = 10 * 1000
+const DEFAULT_POLLING_RETRY_POLICY = retries => {
+  const ret = {
+    delay: retries * ATOM_RETRY_DELAY,
+    reset: false
+  }
+
+  // Longer than 60 is non-sense,
+  // because the max response time of
+  if (retries >= 6) {
+    ret.reset = true
+  }
+
+  return ret
+}
 
 const RULES = {
   host: {
@@ -35,7 +51,13 @@ const RULES = {
   fetchCachedConfig: {
     validate: isBoolean
   },
-  updateNotification: {
+  enableUpdateNotification: {
+    validate: isBoolean
+  },
+  pollingRetryPolicy: {
+    validate: isFunction
+  },
+  enableFetch: {
     validate: isBoolean
   },
   cachePath: {
@@ -88,7 +110,9 @@ const checkOptions = options => {
     dataCenter,
     fetchInterval = DEFAULT_REFRESH_INTERVAL,
     fetchCachedConfig = true,
-    updateNotification = true,
+    enableUpdateNotification = true,
+    pollingRetryPolicy = DEFAULT_POLLING_RETRY_POLICY,
+    enableFetch = false,
     cachePath
   } = options
 
@@ -101,7 +125,9 @@ const checkOptions = options => {
     dataCenter,
     fetchInterval,
     fetchCachedConfig,
-    updateNotification,
+    enableUpdateNotification,
+    pollingRetryPolicy,
+    enableFetch,
     cachePath
   })
 }
@@ -110,5 +136,7 @@ const AVAILABLE_OPTIONS = Object.keys(RULES)
 
 module.exports = {
   checkOptions,
-  AVAILABLE_OPTIONS
+  AVAILABLE_OPTIONS,
+  DEFAULT_CLUSTER,
+  DEFAULT_NAMESPACE
 }
