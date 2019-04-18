@@ -58,17 +58,17 @@ An application can have one or more clusters
 - **options** `Object`
 
 Essential options:
-- **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
-- **appId** `string` apollo application id
-- **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
+  - **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
+  - **appId** `string` apollo application id
+  - **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
 
 
 Optional options:
-- **enableFetch?** `boolean=false` set to `true` to enable the feature
-- **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
-- **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
-- **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
-- **skipInitFetchIfCacheFound?** `boolean=false` whether a namespace should skip the initial fetching if the corresponding cache is found on disk.
+  - **enableFetch?** `boolean=false` set to `true` to enable the feature
+  - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
+  - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
+  - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
+  - **skipInitFetchIfCacheFound?** `boolean=false` whether a namespace should skip the initial fetching if the corresponding cache is found on disk.
 
 Returns `ApolloApplication`
 
