@@ -14,6 +14,7 @@ const DEFAULT_NAMESPACE = 'application'
 // TIMEOUT SHOULD LONGER THAN 60s
 const POLLING_TIMEOUT = 70 * 1000
 
+// All namespaces of the same cluster use a single Polling
 class Polling extends EventEmitter {
   constructor (options) {
     super()
@@ -57,7 +58,11 @@ class Polling extends EventEmitter {
     return notifications
   }
 
-  start (retries = 0) {
+  start () {
+    this._start(0)
+  }
+
+  _start (retries) {
     this._started = true
 
     const url = queryUpdate({
@@ -88,7 +93,7 @@ class Polling extends EventEmitter {
       // There is no changes
       if (status === 304) {
         log('polling: no changes, start polling again')
-        this.start(0)
+        this._start(0)
         return
       }
 
@@ -134,7 +139,7 @@ class Polling extends EventEmitter {
 
     log('polling: retry %s in %s ms', nextRetries, delay)
     setTimeout(() => {
-      this.start(nextRetries)
+      this._start(nextRetries)
     }, delay)
   }
 

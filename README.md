@@ -36,29 +36,35 @@ $ npm i ctrip-apollo
 ```js
 const apollo = require('ctrip-apollo')
 
-const client = apollo({
+const app = apollo({
   host: 'http://localhost:8070',
   appId: '100004458'
 })
 
-await client.ready()
+// Get the default namespace
+const namespace = app.namespace()
 
-console.log(client.get('portal.elastic.cluster.name'))
+await namespace.ready()
+
+console.log(namespace.get('portal.elastic.cluster.name'))
 ```
 
-## apollo(options)
+## app `ApolloApplication`
+
+An application can have one or more clusters
+
+### apollo(options)
 
 - **options** `Object`
   - **host** `URL::host` the host (including protocol, hostname and port) of the apollo config service
   - **appId** `string` apollo application id
-  - **cluster?** `string='default'` cluster name
-  - **namespace?** `string='application'` namespace name. Defaults to `'application'`
   - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Set this option to `0` to disable the feature. Defaults to `5` minutes
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
-  - **updateNotification?** `boolean=true` set to `false` to disable update notification.
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk
 
-Returns `ApolloClient` and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter).
+Returns `ApolloApplication`
+
+ <!-- and class `ApolloClient` is a subclass of [`EventEmitter`](https://nodejs.org/dist/latest-v11.x/docs/api/events.html#events_class_eventemitter). -->
 
 #### options.updateNotification
 
@@ -66,49 +72,81 @@ If `options.updateNotification` is enabled, `options.fetchInterval` will be disa
 
 Make sure the timeout of your gateway is configured more than 60 seconds, [via](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#142-http%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E)
 
-### await client.ready()
+### app.cluster(clusterName?)
+
+- **clusterName?** `string='default'` the cluster name. The cluster name defaults to `'default'`
+
+Returns `ApolloCluster` a cluster manager.
+
+### app.namespace(namespaceName?)
+
+- **namespaceName?** `string='application'` the optional namespace name which defaults to `'application'`
+
+Returns `ApolloNamespace` a namespace manager of the default cluster name.
+
+## cluster `ApolloCluster`
+
+A cluster can have one or more namespaces. And all namespaces of the same cluster use a single polling manager to receive update notifications.
+
+### cluster.namespace(namespaceName?)
+
+- **namespaceName?** `string='application'`
+
+Returns `ApolloNamespace` a namespace manager of the current cluster.
+
+### cluster.updateNotification(enable)
+
+- **enable** `boolean`
+
+Enable or disable the updateNotification
+
+```js
+// Get the default cluster, which is equivalent to
+// app.cluster('default')
+const cluster = app.cluster()
+
+cluster.updateNotification(true)
+```
+
+## namespace `ApolloNamespace`
+
+A namespace is what a configuration key belongs to.
+
+### await namespace.ready()
 
 Fetch the configuration from config service for the first time or fallback to local cache file.
 
-**MAKE SURE** we await `client.ready()` before any `client.config()` or `client.get()` methods are invoked.
+**MAKE SURE** we await `namespace.ready()` before any `namespace.config()` or `namespace.get()` methods are invoked.
 
-### client.config()
+### namespace.config()
 
-Returns `Object` all configurations for the current namespace / application
+Returns `Object` all configurations for the current namespace / application.
+
+Notice that, all configuration getters of a namespace are synchronous methods
 
 ```js
-console.log('application config', client.config())
+console.log('application config', namespace.config())
 ```
 
-### client.get(key)
+### namespace.get(key)
 
 - **key** `string` config key name
 
 Returns the config value of the corresponding key `key`
 
 ```js
-console.log('config for host', client.get('host'))
-```
-
-### client.newNamespace(namespace)
-
-- **namespace** `string` namespace name
-
-Creates and returns a new `ApolloClient` with `namespace`. If the given `namespace` is equivalent to the namespace of `client`, `this` object will be returned.
-
-```js
-const ns = client.newNamespace('web')
+console.log('config for host', namespace.get('host'))
 ```
 
 ## Getters
 
-### Getter: client.namespace
+### Getter: namespace.namespace
 
-Returns `string` the current namespace of the `client`
+Returns `string` the namespace name
 
-### Getter: client.cluster
+### Getter: cluster.cluster
 
-Returns `string` the current cluster of the `client`
+Returns `string` the cluster name
 
 ## Events
 
@@ -119,7 +157,7 @@ Emits if the any configuration changes.
 By default, `ctrip-apollo` uses HTTP long polling to listen the changes of the configurations.
 
 ```js
-client.on('change', e => {
+namespace.on('change', e => {
   console.log('key', e.key)
   console.log('oldValue', e.oldValue)
   console.log('newValue', e.newValue)
