@@ -44,7 +44,7 @@ const app = apollo({
 // Get the default namespace
 const namespace = app.namespace()
 // Namespace is an EventEmitter of nodejs
-.on('update', ({
+.on('change', ({
   key,
   oldValue,
   newValue
