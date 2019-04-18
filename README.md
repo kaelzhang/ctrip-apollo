@@ -352,6 +352,10 @@ const app = apollo({
 
 List of available option keys.
 
+### Error Codes
+
+See [error.js](https://github.com/kaelzhang/ctrip-apollo/blob/master/src/error.js) for details
+
 ## License
 
 [MIT](LICENSE)

@@ -20,7 +20,9 @@ E('POLLING_STATUS_ERROR', 'polling response status %s')
 // Type checking
 ///////////////////////////////////////////////////////////////////////
 EE('options', 'object', 'options', 'an')
-EE('host', 'string', 'options.host')
+// -> 'INVALID_OPTIONS', and vice versa
+
+EE('host', 'string', 'options.host')  // -> 'INVALID_HOST'
 EE('appId', 'string', 'options.appId')
 EE('cluster', 'string', 'options.cluster')
 EE('namespace', 'string', 'options.namespace')
