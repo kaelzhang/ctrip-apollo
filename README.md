@@ -49,9 +49,7 @@ await namespace.ready()
 console.log(namespace.get('portal.elastic.cluster.name'))
 ```
 
-## Examples
-
-### Initialize with namespace
+### Initialize with cluster and namespace
 
 ```js
 const ns = apollo({
@@ -61,7 +59,8 @@ const ns = apollo({
   // Save local cache to the current directory
   cachePath: __dirname
 })
-.ns('my-namespace')
+.cluster('my-cluster')
+.namespace('my-namespace')
 
 await ns.ready()
 
@@ -110,6 +109,16 @@ console.log(ns.get('account.graphql.cluster.name'))
 ```
 
 # APIs
+
+```
+  app (client)                           config service
+    |                                        | | |
+    |-- cluster  <----- long polling --------| | |
+    |   |                                      | |
+    |   |-- namespace  <------- fetch -------- | |
+    |                                            |
+    |-- cluster  <-------- long polling ---------|
+```
 
 ## app `ApolloApplication`
 
@@ -280,10 +289,7 @@ type PollingRetryPolicy = Function(retries): PollingRetryDirective
 ```ts
 interface PollingRetryDirective {
   // `abandon: true` ignores all properties below
-  // and stops update notification polling which is a dangerous directive
-  // After that,
-  // `ctrip-apollo` will fallback to fetching configurations
-  // every `fetchInterval` milliseconds
+  // and stops update notification polling which is a dangerous directive.
   abandon?: boolean
   // After `delay` milliseconds,
   // it will try to poll the update notification again
@@ -299,8 +305,8 @@ interface PollingRetryDirective {
 The default `pollingRetryPolicy` is equivalent to:
 
 ```js
+// It schedule the first retry in 10 seconds, and adds extra 10s delay everytime.
 // It will reset the `retries` counter after the 6th retry.
-// Schedule the first retry in 10 seconds, and adds extra 10s delay everytime.
 const {DEFAULT_POLLING_RETRY_POLICY} = require('ctrip-apollo')
 ```
 
