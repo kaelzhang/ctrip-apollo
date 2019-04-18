@@ -1,8 +1,11 @@
 const test = require('ava')
 const apollo = require('..')
+const {options} = require('./create')
 
-const host = 'http://localhost:8070'
-// const appId = 'apollo'
+const {
+  host,
+  appId
+} = options
 
 const CASES = [
   [null, 'INVALID_OPTIONS'],
@@ -12,11 +15,16 @@ const CASES = [
   [{
     host,
     appId: 1
-  }, 'INVALID_APPID']
+  }, 'INVALID_APPID'],
+  [options, 'INVALID_CLUSTER_NAME', opts => apollo(opts).cluster(1)],
+  [{
+    host,
+    appId
+  }, 'INVALID_NAMESPACE_NAME', opts => apollo(opts).namespace(1)]
 ]
 
-CASES.forEach(([options, code]) => {
-  test(`${JSON.stringify(options)}: error code: ${code}`, t => {
-    t.throws(() => apollo(options), {code})
+CASES.forEach(([opts, code, runner = apollo]) => {
+  test(`${JSON.stringify(opts)}: error code: ${code}`, t => {
+    t.throws(() => runner(opts), {code})
   })
 })

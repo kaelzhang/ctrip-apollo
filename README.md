@@ -44,6 +44,8 @@ const app = apollo({
 // Get the default namespace
 const namespace = app.namespace()
 
+// - Fetch configurations for the first time
+// - start update notification polling (by default)
 await namespace.ready()
 
 console.log(namespace.get('portal.elastic.cluster.name'))
@@ -115,7 +117,7 @@ console.log(ns.get('account.graphql.cluster.name'))
     |                                        | | |
     |-- cluster  <----- long polling --------| | |
     |   |                                      | |
-    |   |-- namespace  <------- fetch -------- | |
+    |   |-- namespace  <------- fetch ---------| |
     |                                            |
     |-- cluster  <-------- long polling ---------|
 ```

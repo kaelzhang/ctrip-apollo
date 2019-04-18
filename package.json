@@ -4,11 +4,13 @@
   "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
-    "test": "NODE_DEBUG=ctrip-apollo nyc ava --verbose --timeout=10s test/*.test.js",
+    "test": "NODE_DEBUG=ctrip-apollo nyc ava --verbose --timeout=10s",
     "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint .",
     "fix": "eslint . --fix",
-    "debug": "NODE_DEBUG=ctrip-apollo node no-track"
+    "debug": "NODE_DEBUG=ctrip-apollo node no-track",
+    "report:dev": "nyc report --reporter=html && npm run report:open","report:open": "open coverage/index.html",
+    "test:dev": "npm run test && npm run report:dev"
   },
   "files": [
     "src/"
@@ -33,7 +35,10 @@
     "url": "https://github.com/kaelzhang/ctrip-apollo/issues"
   },
   "ava": {
-    "babel": false
+    "babel": false,
+    "files": [
+      "test/*.test.js"
+    ]
   },
   "devDependencies": {
     "ava": "^1.4.1",

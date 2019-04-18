@@ -5,7 +5,7 @@ const {E, error} = new Errors({
   prefix: '[ctrip-apollo] '
 })
 
-const EE = (name, type, desc = name, unit = 'a') => E(
+const EE = (name, type, desc, unit = 'a') => E(
   `INVALID_${name.toUpperCase()}`,
   `${desc} must be ${unit} ${type}, but got %s`,
   TypeError
