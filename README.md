@@ -43,12 +43,31 @@ const app = apollo({
 
 // Get the default namespace
 const namespace = app.namespace()
+// Namespace is an EventEmitter of nodejs
+.on('update', ({
+  key,
+  oldValue,
+  newValue
+}) => {
+  // Updates new values to `process.env`
+  process.env[key] = newValue
+})
 
 // - Fetch configurations for the first time
 // - start update notification polling (by default)
 await namespace.ready()
 
 console.log(namespace.get('portal.elastic.cluster.name'))
+// 'hermes-es-jp'
+
+// THen, go and change/publish configurations in apollo admin
+console.log(namespace.get('portal.elastic.cluster.name'))
+// 'hermes-es-us'
+// <----
+// ctrip-apollo handles update notifications in the background
+
+console.log(process.env['portal.elastic.cluster.name'])
+// 'hermes-es-us'
 ```
 
 ### Initialize with cluster and namespace
@@ -90,7 +109,7 @@ client.ready()
 .then(() => {
   console.log(client.get('portal.elastic.cluster.name'))
   // might be:
-  // hermes-es-fws
+  // 'hermes-es-us'
 })
 ```
 
