@@ -77,7 +77,7 @@ class Polling extends EventEmitter {
   }
 
   _start (retries) {
-    if (this._enabled) {
+    if (!this._enabled) {
       // Stop polling when it is disabled
       this._started = false
       return

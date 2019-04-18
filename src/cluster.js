@@ -12,21 +12,18 @@ class ApolloCluster extends Base {
     const {
       host,
       appId,
-      cluster
+      cluster,
+      pollingRetryPolicy
     } = this._options
 
     const polling = this._polling = new Polling({
       host,
       appId,
-      cluster
-    })
+      cluster,
+      pollingRetryPolicy
+    }, this._options.enableUpdateNotification)
 
     polling.on('update', namespace => {
-      if (namespace !== this._options.namespace) {
-        log('client: skip initial polling update')
-        return
-      }
-
       log('client: receive update, start to fetch with no cache')
 
       // Always fetch non-cached configurations when received update event,
