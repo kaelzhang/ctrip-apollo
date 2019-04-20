@@ -241,15 +241,15 @@ A namespace is what a configuration key belongs to.
 
 ### await namespace.ready(): this
 
-Read the local cache file if exists, and fetch the configuration from config service for the first time if `options.skipInitFetchIfCacheFound` is set to `false` (the default value).
+Fetch the configuration from config service for the first time, or fallback to reading the local cache file, and if `options.skipInitFetchIfCacheFound` is set to `false` (the default value).
 
-If there is no cache file and it fails to fetch configurations, this method will reject.
+If it fails to fetch configurations and read local cache, this method will reject.
 
 **MAKE SURE** we await `namespace.ready()` before any `namespace.config()` or `namespace.get()` methods are invoked.
 
 ### namespace.config(): Object
 
-Returns `Object` all configurations for the current namespace / application.
+Returns `Object` the shallow copy of all configurations for the current namespace / application.
 
 Notice that, all configuration getters of a namespace are synchronous methods
 
