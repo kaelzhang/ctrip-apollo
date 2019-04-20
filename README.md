@@ -55,19 +55,20 @@ const namespace = app.namespace()
 
 // - Fetch configurations for the first time
 // - start update notification polling (by default)
-await namespace.ready()
+namespace.ready()
+.then(() => {
+  console.log(namespace.get('portal.elastic.cluster.name'))
+  // 'hermes-es-jp'
 
-console.log(namespace.get('portal.elastic.cluster.name'))
-// 'hermes-es-jp'
+  // THen, go and change/publish configurations in apollo admin
+  console.log(namespace.get('portal.elastic.cluster.name'))
+  // 'hermes-es-us'
+  // <----
+  // ctrip-apollo handles update notifications in the background
 
-// THen, go and change/publish configurations in apollo admin
-console.log(namespace.get('portal.elastic.cluster.name'))
-// 'hermes-es-us'
-// <----
-// ctrip-apollo handles update notifications in the background
-
-console.log(process.env['portal.elastic.cluster.name'])
-// 'hermes-es-us'
+  console.log(process.env['portal.elastic.cluster.name'])
+  // 'hermes-es-us'
+})
 ```
 
 ### Initialize with cluster and namespace
@@ -83,13 +84,18 @@ const ns = apollo({
 .cluster('my-cluster')
 .namespace('my-namespace')
 
-await ns.ready()
+const start = async () => {
+  // We can also use async/await
+  await ns.ready()
 
-console.log(ns.config())
-// {
-//   'portal.elastic.document.type': 'biz',
-//   'portal.elastic.cluster.name': 'hermes-es-fws'
-// }
+  console.log(ns.config())
+  // {
+  //   'portal.elastic.document.type': 'biz',
+  //   'portal.elastic.cluster.name': 'hermes-es-fws'
+  // }
+}
+
+start()
 ```
 
 ### Disable update notifications(HTTP long polling)
@@ -116,13 +122,16 @@ client.ready()
 ### Chainable
 
 ```js
+const ns = await
 
-const ns = await apollo({host, appId})  // <-- app
-.cluster('ap-northeast-1')              // <-- cluster
-.enableUpdateNotification(true)         // <-- cluster
-.namespace('account-service')           // <-- namespace
-.enableFetch(false)                     // <-- namespace
-.ready()                                // <-- Promise {namespace}
+apollo({host, appId})               // <-- app
+
+  .cluster('ap-northeast-1')        // <-- cluster
+  .enableUpdateNotification(true)   // <-- cluster
+
+    .namespace('account-service')   // <-- namespace
+    .enableFetch(false)             // <-- namespace
+    .ready()                        // <-- Promise {namespace}
 
 console.log(ns.get('account.graphql.cluster.name'))
 // might be:
@@ -175,6 +184,13 @@ Make sure the timeout of your gateway is configured more than 60 seconds, [via](
 #### options.enableFetch
 
 If `options.enableFetch` is set to `true` (default value is `false`), all namespaces will fetch new configurations on every time period of `options.fetchInterval`
+
+#### options.skipInitFetchIfCacheFound
+
+- **`true`** the client tries to read local cache first, if the cache is found, then it will skip the initial fetching.
+- **`false`** the client tries to fetch configuration from config service first, if it fails, it will try to read the local cache
+
+If neither reading local cache nor fetching from remote comes successful, `await namespace.ready()` will fail.
 
 ### app.cluster(clusterName?): ApolloCluster
 

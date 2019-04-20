@@ -5,6 +5,10 @@ test('default namespace', t => {
   t.is(create().namespace().namespace, 'application')
 })
 
+test('default namespace cluster', t => {
+  t.is(create().namespace().cluster, 'default')
+})
+
 test('default cluster name', t => {
   t.is(create().cluster().cluster, 'default')
 })
