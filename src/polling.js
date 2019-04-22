@@ -182,6 +182,8 @@ class Polling extends EventEmitter {
       // Actually, it will never happen
       // which is handled by apollo config service
       // but we still do this for fault tolerance
+
+      /* istanbul ignore next */
       if (oldNotificationId === notificationId) {
         /* istanbul ignore next */
         return

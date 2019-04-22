@@ -215,6 +215,10 @@ class ApolloNamespace extends EventEmitter {
   }
 
   async fetch (withCache) {
+    if (!this._ready) {
+      return
+    }
+
     let result
     try {
       result = withCache

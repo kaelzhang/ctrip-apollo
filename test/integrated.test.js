@@ -15,9 +15,14 @@ let port
 let app
 let baz
 let abaz
-let config
 
 const appId = 'foo'
+
+const create = (options = {}) => apollo({
+  appId,
+  host,
+  ...options
+})
 
 test.before(async () => {
   port = await getPort()
@@ -27,10 +32,7 @@ test.before(async () => {
   // - no cache
   // - with update notification
   // - no fetch
-  app = apollo({
-    appId,
-    host
-  })
+  app = create()
 
   baz = app.namespace('baz')
 })
@@ -40,10 +42,16 @@ test.serial('request error', async t => {
     code: 'FETCH_REQUEST_ERROR'
   })
 
-  /* eslint-disable semi-style */
-  ;({
-    config
-  } = await listen(POLLING_TIMEOUT, port))
+  const baz2 = create({
+    skipInitFetchIfCacheFound: true
+  })
+  .namespace('baz')
+
+  await t.throwsAsync(() => baz2.ready(), {
+    code: 'NO_CACHE_SPECIFIED'
+  })
+
+  await listen(POLLING_TIMEOUT, port)
 })
 
 test.serial('status 404, not found', async t => {
