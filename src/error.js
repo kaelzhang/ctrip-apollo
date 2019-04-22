@@ -49,6 +49,7 @@ const EEE = (code, message) => E(code, {
   err.message = `${err.originalMessage}: ${err.message}`
   err.reason = err.message
   err.code = code
+
   return err
 })
 
@@ -64,12 +65,9 @@ EEE('POLLING_JSON_PARSE_ERROR', 'polling result fails to parse')
 ///////////////////////////////////////////////////////////////////////
 EEE('NO_LOCAL_CACHE_FOUND', 'local cache file "%s" not found or not accessible')
 
-EEE('READ_LOCAL_CACHE_FAILS', 'fails to read local cache file "%s"')
+E('NO_CACHE_SPECIFIED', 'options.cachePath not specified')
 
-// ready
-///////////////////////////////////////////////////////////////////////
-EEE('INIT_FETCH_FAILS',
-  'initial fetch fails, and options.cachePath not specified')
+EEE('READ_LOCAL_CACHE_FAILS', 'fails to read local cache file "%s"')
 
 const composeError = (primary, secondary) => {
   primary.message = `${
@@ -88,6 +86,8 @@ const composeError = (primary, secondary) => {
   if (secondary.reason) {
     primary.message += `\n- ${secondary.reason}`
   }
+
+  primary.codes = [primary.code, secondary.code]
 
   return primary
 }

@@ -4,7 +4,7 @@
   "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
-    "test": "NODE_DEBUG=ctrip-apollo nyc ava --verbose --timeout=10s",
+    "test": "NODE_DEBUG=ctrip-apollo nyc ava --verbose --timeout=20s",
     "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint .",
     "fix": "eslint . --fix",

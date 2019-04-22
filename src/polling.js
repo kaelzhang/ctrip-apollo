@@ -7,9 +7,6 @@ const request = require('request')
 
 const {queryUpdate} = require('./url')
 const {error} = require('./error')
-const {
-  DEFAULT_NAMESPACE
-} = require('./options')
 
 // TIMEOUT SHOULD LONGER THAN 60s
 const POLLING_TIMEOUT = 70 * 1000
@@ -57,10 +54,7 @@ class Polling extends EventEmitter {
 
     for (const namespace of this._ns.values()) {
       const item = {
-        namespaceName: namespace === DEFAULT_NAMESPACE
-          ? namespace
-          : `${namespace}.json`,
-
+        namespaceName: `${namespace}.json`,
         notificationId: (namespace in this._notificationIds)
           ? this._notificationIds[namespace]
           : 0

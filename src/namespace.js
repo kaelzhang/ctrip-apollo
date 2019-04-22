@@ -263,11 +263,10 @@ class ApolloNamespace extends EventEmitter {
       await this._firstFetch()
       return
     } catch (err) {
-      if (!readError) {
-        throw error('INIT_FETCH_FAILS', err)
-      }
-
-      throw composeError(readError, err)
+      throw composeError(
+        readError || error('NO_CACHE_SPECIFIED'),
+        err
+      )
     }
   }
 
@@ -292,7 +291,10 @@ class ApolloNamespace extends EventEmitter {
     }
 
     if (!this._config) {
-      throw error('INIT_FETCH_FAILS', fetchError)
+      throw composeError(
+        fetchError,
+        error('NO_CACHE_SPECIFIED')
+      )
     }
   }
 
