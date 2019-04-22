@@ -42,7 +42,7 @@
     ]
   },
   "devDependencies": {
-    "apollo-mock-server": "^1.0.0",
+    "apollo-mock-server": "^1.0.1",
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
     "delay": "^4.2.0",

@@ -240,12 +240,12 @@ class ApolloNamespace extends EventEmitter {
 
     this._config = config
 
+    this._checkReady = NOOP
+    this._ready = true
+
     if (this._options.enableFetch) {
       this.enableFetch(true)
     }
-
-    this._checkReady = NOOP
-    this._ready = true
 
     this.emit('ready')
 
@@ -370,9 +370,9 @@ class ApolloNamespace extends EventEmitter {
     }
 
     this._fetchTimer = setInterval(() => {
-      if (!options.enableFetch) {
-        return
-      }
+      // if (!options.enableFetch) {  // <- never happen
+      //   return
+      // }
 
       this.fetch(options.fetchCachedConfig)
     }, options.fetchInterval)
@@ -380,6 +380,7 @@ class ApolloNamespace extends EventEmitter {
 
   _disableFetch () {
     this._options.enableFetch = false
+
     if (this._fetchTimer) {
       clearInterval(this._fetchTimer)
     }
