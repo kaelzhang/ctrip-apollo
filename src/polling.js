@@ -71,6 +71,7 @@ class Polling extends EventEmitter {
   }
 
   _start (retries) {
+    /* istanbul ignore if */
     if (!this._enabled) {
       // Stop polling when it is disabled
       this._started = false
@@ -118,7 +119,7 @@ class Polling extends EventEmitter {
       }
 
       if (status !== 200) {
-        log('polling: response error, body: %s', body)
+        log('polling: response error, status: %s, body: %s', status, body)
         return this._handleError(
           error('POLLING_STATUS_ERROR', status),
           retries

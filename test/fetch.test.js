@@ -8,10 +8,9 @@ const {
   prepare
 } = require('./prepare')
 
-const appId = 'foo-cache'
+const appId = 'foo-fetch'
 const cluster = 'baz2'
 
-let config
 let host
 let abaz
 
@@ -35,7 +34,6 @@ const create = (options = {}) => apollo({
 
 test.before(async () => {
   ({
-    config,
     host
   } = await prepare(POLLING_TIMEOUT))
 

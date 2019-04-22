@@ -11,7 +11,8 @@ const DEFAULT_REFRESH_INTERVAL = 5 * 60 * 1000
 const ATOM_RETRY_DELAY = 10 * 1000
 const DEFAULT_POLLING_RETRY_POLICY = retries => {
   const ret = {
-    delay: retries * ATOM_RETRY_DELAY,
+    // Testing: allow tests cases to change the value
+    delay: retries * module.exports.ATOM_RETRY_DELAY,
     reset: false
   }
 
@@ -144,5 +145,6 @@ module.exports = {
   checkOptions,
   AVAILABLE_OPTIONS,
   DEFAULT_CLUSTER,
-  DEFAULT_NAMESPACE
+  DEFAULT_NAMESPACE,
+  ATOM_RETRY_DELAY
 }
