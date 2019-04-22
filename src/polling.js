@@ -159,6 +159,8 @@ class Polling extends EventEmitter {
   }
 
   _diff (notifications) {
+    console.log('old', this._notificationIds)
+    console.log('new', notifications)
     notifications.forEach(({
       namespaceName,
       notificationId

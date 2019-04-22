@@ -13,7 +13,7 @@ class Base {
     this._key = key
   }
 
-  _child (name) {
+  _child (name, init) {
     if (!isString(name)) {
       throw error(this._errorCode, name)
     }
@@ -22,10 +22,14 @@ class Base {
       return this._children[name]
     }
 
-    return this._children[name] = new this._Child({
+    const child = this._children[name] = new this._Child({
       ...this._options,
       [this._key]: name
     })
+
+    init && init(child)
+
+    return child
   }
 }
 

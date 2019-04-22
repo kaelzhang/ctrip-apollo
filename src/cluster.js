@@ -37,9 +37,9 @@ class ApolloCluster extends Base {
   }
 
   namespace (namespace = DEFAULT_NAMESPACE) {
-    const child = this._child(namespace)
-
-    child.once('ready', () => {
+    const child = this._child(namespace, () => {
+      // Start polling instantly,
+      // even if the namespace is not ready
       this._polling.addNamespace(namespace)
     })
 

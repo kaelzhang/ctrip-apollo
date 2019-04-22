@@ -303,6 +303,14 @@ namespace.on('change', e => {
 })
 ```
 
+### Event: `'add'`
+
+Emits if a new configuration key has been added
+
+### Event: `'delete'`
+
+Emits if a configuration key has been deleted
+
 If `options.fetchInterval` is set to `0` and `options.updateNotification` is set to `false`, then the event will never emit.
 
 ### Event: `'fetch-error'`

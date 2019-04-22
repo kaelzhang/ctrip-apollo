@@ -4,6 +4,7 @@ const log = require('util').debuglog('ctrip-apollo')
 
 const req = require('request')
 const fs = require('fs-extra')
+const {diff, asc} = require('diff-sorted-array')
 
 const {createKey} = require('./util')
 const {error, composeError} = require('./error')
@@ -53,6 +54,7 @@ class ApolloNamespace extends EventEmitter {
 
     this._options = options
     this._config = null
+    this._configKeys = []
     this._releaseKey = null
     this._cacheFile = this._createCacheFile()
 
@@ -136,14 +138,14 @@ class ApolloNamespace extends EventEmitter {
     return this._load(url, CONVERTER.CACHE)
   }
 
-  _save () {
+  _save (config) {
     const cacheFile = this._cacheFile
     if (!cacheFile) {
       return
     }
 
     // Save asynchronously
-    fs.outputJson(cacheFile, this._config, err => {
+    fs.outputJson(cacheFile, config, err => {
       if (err) {
         log('client: save error, stack: %s', err.stack)
         this.emit('save-error', err)
@@ -163,13 +165,22 @@ class ApolloNamespace extends EventEmitter {
       return
     }
 
-    Object.keys(config).forEach(key => {
+    const newKeys = Object.keys(config).sort(asc)
+    const {
+      unchanged,
+      added,
+      deleted
+    } = diff(this._configKeys, newKeys, asc)
+
+    unchanged.forEach(key => {
       const oldValue = this._config[key]
       const newValue = config[key]
 
       if (oldValue === newValue) {
         return
       }
+
+      this._config[key] = newValue
 
       this.emit('change', {
         oldValue,
@@ -178,10 +189,29 @@ class ApolloNamespace extends EventEmitter {
       })
     })
 
-    // Directly set the new value,
-    // so that we need not to handle with deleted keys
-    this._config = config
-    this._save()
+    added.forEach(key => {
+      const value = config[key]
+
+      this._config[key] = value
+
+      this.emit('add', {
+        value,
+        key
+      })
+    })
+
+    deleted.forEach(key => {
+      const value = this._config[key]
+
+      delete this._config[key]
+
+      this.emit('delete', {
+        value,
+        key
+      })
+    })
+
+    this._save(this._config)
   }
 
   async fetch (withCache) {
@@ -200,9 +230,12 @@ class ApolloNamespace extends EventEmitter {
   }
 
   async ready () {
-    this._options.skipInitFetchIfCacheFound
+    const config = this._options.skipInitFetchIfCacheFound
       ? await this._readOrFetch()
       : await this._fetchOrFallback()
+
+    this._config = config
+    this._configKeys = Object.keys(config).sort(asc)
 
     if (this._options.enableFetch) {
       this.enableFetch(true)
@@ -241,27 +274,28 @@ class ApolloNamespace extends EventEmitter {
       config
     } = await this._loadWithNoCache()
 
-    this._config = config
-    this._save()
+    this._save(config)
+
+    return config
   }
 
   async _readOrFetch () {
     let readError
+    let config
 
     try {
-      this._config = await this._readCache()
+      config = await this._readCache()
     } catch (err) {
       readError = err
     }
 
-    if (this._config) {
+    if (config) {
       log('cache found, skip fetching')
-      return
+      return config
     }
 
     try {
-      await this._firstFetch()
-      return
+      return await this._firstFetch()
     } catch (err) {
       throw composeError(
         readError || error('NO_CACHE_SPECIFIED'),
@@ -274,8 +308,7 @@ class ApolloNamespace extends EventEmitter {
     let fetchError
 
     try {
-      await this._firstFetch()
-      return
+      return await this._firstFetch()
     } catch (err) {
       this.emit('fetch-error', err)
       fetchError = err
@@ -283,19 +316,22 @@ class ApolloNamespace extends EventEmitter {
 
     // If fails to fetch configurations from apollo,
     // then fallback to local cache file
+    let config
 
     try {
-      this._config = await this._readCache()
+      config = await this._readCache()
     } catch (err) {
       throw composeError(fetchError, err)
     }
 
-    if (!this._config) {
-      throw composeError(
-        fetchError,
-        error('NO_CACHE_SPECIFIED')
-      )
+    if (config) {
+      return config
     }
+
+    throw composeError(
+      fetchError,
+      error('NO_CACHE_SPECIFIED')
+    )
   }
 
   _checkReady (name) {
