@@ -92,6 +92,7 @@ class Polling extends EventEmitter {
     }, (err, response) => {
       // Do nothing is polling is disabled
       if (!this._enabled) {
+        this._started = false
         return
       }
 

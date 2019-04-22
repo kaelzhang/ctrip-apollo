@@ -165,21 +165,21 @@ test.serial('disabled notification', async t => {
   })
 })
 
-// test.serial('could enable notification again', async t => {
-//   await new Promise(resolve => {
-//     baz.once('change', ({
-//       key,
-//       oldValue,
-//       newValue
-//     }) => {
-//       t.deepEqual(baz.get(clusterKey), clusterName)
-//       t.is(key, clusterKey)
-//       t.is(oldValue, clusterName2)
-//       t.is(newValue, clusterName)
+test.serial('could enable notification again', async t => {
+  await new Promise(resolve => {
+    baz.once('change', ({
+      key,
+      oldValue,
+      newValue
+    }) => {
+      t.deepEqual(baz.get(clusterKey), clusterName)
+      t.is(key, clusterKey)
+      t.is(oldValue, clusterName2)
+      t.is(newValue, clusterName)
 
-//       resolve()
-//     })
+      resolve()
+    })
 
-//     app.cluster().enableUpdateNotification(false)
-//   })
-// })
+    app.cluster().enableUpdateNotification(false)
+  })
+})
