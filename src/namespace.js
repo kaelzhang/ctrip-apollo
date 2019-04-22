@@ -4,7 +4,7 @@ const log = require('util').debuglog('ctrip-apollo')
 
 const req = require('request')
 const fs = require('fs-extra')
-const {diff, asc} = require('diff-sorted-array')
+const {diff} = require('diff-sorted-array')
 
 const {createKey} = require('./util')
 const {error, composeError} = require('./error')
@@ -54,7 +54,6 @@ class ApolloNamespace extends EventEmitter {
 
     this._options = options
     this._config = null
-    this._configKeys = []
     this._releaseKey = null
     this._cacheFile = this._createCacheFile()
 
@@ -165,12 +164,13 @@ class ApolloNamespace extends EventEmitter {
       return
     }
 
-    const newKeys = Object.keys(config).sort(asc)
+    const oldKeys = Object.keys(this._config)
+    const newKeys = Object.keys(config)
     const {
       unchanged,
       added,
       deleted
-    } = diff(this._configKeys, newKeys, asc)
+    } = diff(oldKeys, newKeys)
 
     unchanged.forEach(key => {
       const oldValue = this._config[key]
@@ -235,7 +235,6 @@ class ApolloNamespace extends EventEmitter {
       : await this._fetchOrFallback()
 
     this._config = config
-    this._configKeys = Object.keys(config).sort(asc)
 
     if (this._options.enableFetch) {
       this.enableFetch(true)

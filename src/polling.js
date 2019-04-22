@@ -90,6 +90,11 @@ class Polling extends EventEmitter {
     request(url, {
       timeout: POLLING_TIMEOUT
     }, (err, response) => {
+      // Do nothing is polling is disabled
+      if (!this._enabled) {
+        return
+      }
+
       log('polling: responses cost: %s ms', Date.now() - start)
 
       if (err) {
@@ -159,8 +164,6 @@ class Polling extends EventEmitter {
   }
 
   _diff (notifications) {
-    console.log('old', this._notificationIds)
-    console.log('new', notifications)
     notifications.forEach(({
       namespaceName,
       notificationId
@@ -175,7 +178,11 @@ class Polling extends EventEmitter {
         return
       }
 
+      // Actually, it will never happen
+      // which is handled by apollo config service
+      // but we still do this for fault tolerance
       if (oldNotificationId === notificationId) {
+        /* istanbul ignore next */
         return
       }
 

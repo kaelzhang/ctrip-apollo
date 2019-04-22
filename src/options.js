@@ -74,7 +74,7 @@ const ensureType = object => {
     const {
       validate,
       optional,
-      set
+      // set
     } = RULES[key]
 
     const v = object[key]
@@ -88,9 +88,10 @@ const ensureType = object => {
     }
 
     // Setters can throw
-    if (set) {
-      object[key] = set(v)
-    }
+    // For now, this is useless
+    // if (set) {
+    //   object[key] = set(v)
+    // }
   })
 
   return object
