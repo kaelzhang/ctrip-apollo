@@ -15,6 +15,7 @@ let port
 let app
 let baz
 let abaz
+let config
 
 const appId = 'foo'
 
@@ -39,7 +40,10 @@ test.serial('request error', async t => {
     code: 'FETCH_REQUEST_ERROR'
   })
 
-  await listen(POLLING_TIMEOUT, port)
+  /* eslint-disable semi-style */
+  ;({
+    config
+  } = await listen(POLLING_TIMEOUT, port))
 })
 
 test.serial('status 404, not found', async t => {
@@ -180,6 +184,6 @@ test.serial('could enable notification again', async t => {
       resolve()
     })
 
-    app.cluster().enableUpdateNotification(false)
+    app.cluster().enableUpdateNotification(true)
   })
 })

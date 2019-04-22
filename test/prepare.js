@@ -9,7 +9,10 @@ const prepare = async pollingTimeout => {
   })
 
   const port = await config.listen()
-  return `http://127.0.0.1:${port}`
+  return {
+    host: `http://127.0.0.1:${port}`,
+    config
+  }
 }
 
 const listen = async (pollingTimeout, port) => {
@@ -17,7 +20,10 @@ const listen = async (pollingTimeout, port) => {
     pollingTimeout
   })
 
-  return config.listen(port)
+  return {
+    host: await config.listen(port),
+    config
+  }
 }
 
 module.exports = {

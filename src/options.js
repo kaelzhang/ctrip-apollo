@@ -57,6 +57,9 @@ const RULES = {
   pollingRetryPolicy: {
     validate: isFunction
   },
+  skipInitFetchIfCacheFound: {
+    validate: isBoolean
+  },
   enableFetch: {
     validate: isBoolean
   },
@@ -74,7 +77,7 @@ const ensureType = object => {
     const {
       validate,
       optional,
-      // set
+      set
     } = RULES[key]
 
     const v = object[key]
@@ -89,9 +92,9 @@ const ensureType = object => {
 
     // Setters can throw
     // For now, this is useless
-    // if (set) {
-    //   object[key] = set(v)
-    // }
+    if (set) {
+      object[key] = set(v)
+    }
   })
 
   return object
@@ -113,6 +116,7 @@ const checkOptions = options => {
     fetchCachedConfig = true,
     enableUpdateNotification = true,
     pollingRetryPolicy = DEFAULT_POLLING_RETRY_POLICY,
+    skipInitFetchIfCacheFound = false,
     enableFetch = false,
     cachePath
   } = options
@@ -128,6 +132,7 @@ const checkOptions = options => {
     fetchCachedConfig,
     enableUpdateNotification,
     pollingRetryPolicy,
+    skipInitFetchIfCacheFound,
     enableFetch,
     cachePath
   })
