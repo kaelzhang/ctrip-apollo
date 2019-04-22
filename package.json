@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "fix": "eslint . --fix",
     "debug": "NODE_DEBUG=ctrip-apollo node no-track",
-    "report:dev": "nyc report --reporter=html && npm run report:open","report:open": "open coverage/index.html",
+    "report:dev": "nyc report --reporter=html && npm run report:open",
+    "report:open": "open coverage/index.html",
     "test:dev": "npm run test && npm run report:dev"
   },
   "files": [
@@ -43,6 +44,7 @@
   "devDependencies": {
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
+    "delay": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-ostai": "^3.0.0",
     "eslint-plugin-import": "^2.17.2",
