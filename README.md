@@ -168,13 +168,13 @@ cluster.namespace('account-service', 'JSON') // <=====
 .ready()
 // .ready() resolves the namespace instance
 .then(account => {
-  account.get('redis.sentinel.port')  // 6379
+  console.log(account.get('redis.sentinel.port')) // 6379
 })
 
 cluster.namespace('asset-service')
 .ready()
 .then(asset => {
-  asset.get('redis.sentinel.port')   // '6379'
+  console.log(asset.get('redis.sentinel.port'))   // '6379'
 })
 ```
 
