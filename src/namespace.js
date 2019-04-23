@@ -385,6 +385,7 @@ class ApolloNamespace extends EventEmitter {
 
     if (this._fetchTimer) {
       clearInterval(this._fetchTimer)
+      this._fetchTimer = null
     }
   }
 }

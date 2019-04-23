@@ -72,6 +72,7 @@ test.serial('enable fetch before ready', async t => {
   t.is(baz.get(clusterKey), clusterName)
 
   baz.enableFetch(false)
+  baz.enableFetch(false)
   abaz.set(clusterKey, clusterName2)
 
   await delay(FETCH_INTERVAL + 100)

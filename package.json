@@ -1,6 +1,6 @@
 {
   "name": "ctrip-apollo",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
