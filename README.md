@@ -144,9 +144,9 @@ console.log(ns.get('account.graphql.cluster.name'))
 
 By default, `ctrip-apollo` and apollo admin service store configurations in `java.util.Properties` format.
 
-If we have two namespaces:
+If we have two namespaces.
 
-`account-service` stores configurations in JSON,
+The one is `account-service` which stores configurations in JSON,
 
 ```json
 {
@@ -154,7 +154,7 @@ If we have two namespaces:
 }
 ```
 
-while `asset-service` in properties
+while the other one `asset-service` in properties
 
 ```properties
 redis.sentinel.port=6379
@@ -164,7 +164,7 @@ redis.sentinel.port=6379
 const cluster = apollo({host, appId}).cluster('ap-northeast-1')
 
 // in JSON format
-cluster.namespace('account-service', 'JSON')
+cluster.namespace('account-service', 'JSON') // <=====
 .ready()
 // .ready() resolves the namespace instance
 .then(account => {
