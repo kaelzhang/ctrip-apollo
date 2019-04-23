@@ -19,9 +19,11 @@ The most delightful and handy Node.js client for Ctrip's [apollo](https://github
 
 - **Provides easy-to-use APIs** that just leave everything else to `ctrip-apollo`
 - **Implements update notifications** by using HTTP long polling, and handles all kinds of network errors.
+- **Updates configurations in background** that we could get a specific config property with a synchronous method with **NO** performance issues.
 - **Supports custom retry policy for polling**
 - **Implements disk cache** to against the situation that all config services are down.
-- **Updates configurations in background** that we could get a specific config property with a synchronous method with **NO** performance issues.
+- **Supports both http and https requests**
+- **Supports configurations in both properties format and JSON format**
 
 `ctrip-apollo` directly uses `async/await` and requires node >= 7.10.1
 
@@ -136,6 +138,44 @@ apollo({host, appId})               // <-- app
 console.log(ns.get('account.graphql.cluster.name'))
 // might be:
 // graph-us-3
+```
+
+### Configurations in JSON format
+
+By default, `ctrip-apollo` and apollo admin service store configurations in `java.util.Properties` format.
+
+If we have two namespaces:
+
+`account-service` stores configurations in JSON,
+
+```json
+{
+  "redis.sentinel.port": 6379
+}
+```
+
+while `asset-service` in properties
+
+```properties
+redis.sentinel.port=6379
+```
+
+```js
+const cluster = apollo({host, appId}).cluster('ap-northeast-1')
+
+// in JSON format
+cluster.namespace('account-service', 'JSON')
+.ready()
+// .ready() resolves the namespace instance
+.then(account => {
+  account.get('redis.sentinel.port')  // 6379
+})
+
+cluster.namespace('asset-service')
+.ready()
+.then(asset => {
+  asset.get('redis.sentinel.port')   // '6379'
+})
 ```
 
 # APIs
