@@ -48,7 +48,7 @@ test.before(async () => {
 
 test.serial('notification error and disable', async t => {
   const cluster = createCluster()
-  const baz = cluster.namespace('baz')
+  const baz = cluster.namespace('baz', 'JSON')
   await baz.ready()
   config.enableUpdateNotification(false)
 

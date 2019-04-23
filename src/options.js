@@ -139,12 +139,26 @@ const checkOptions = options => {
   })
 }
 
+const DEFAULT_NAMESPACE_TYPE = 'PROPERTIES'
+const AVAILABLE_NAMESPACE_TYPES = [
+  DEFAULT_NAMESPACE_TYPE,
+  'JSON'
+]
+
+const checkNamespaceType = type => {
+  if (!AVAILABLE_NAMESPACE_TYPES.includes(type)) {
+    throw error('INVALID_NAMESPACE_TYPE', type)
+  }
+}
+
 const AVAILABLE_OPTIONS = Object.keys(RULES)
 
 module.exports = {
   checkOptions,
+  checkNamespaceType,
   AVAILABLE_OPTIONS,
   DEFAULT_CLUSTER,
   DEFAULT_NAMESPACE,
+  DEFAULT_NAMESPACE_TYPE,
   ATOM_RETRY_DELAY
 }

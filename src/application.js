@@ -16,7 +16,7 @@ module.exports = class ApolloApplication extends Base {
     return this._child(cluster)
   }
 
-  namespace (namespace) {
-    return this.cluster().namespace(namespace)
+  namespace (namespace, type) {
+    return this.cluster().namespace(namespace, type)
   }
 }

@@ -3,7 +3,10 @@ const log = require('util').debuglog('ctrip-apollo')
 const {ApolloNamespace} = require('./namespace')
 const {Polling} = require('./polling')
 const {Base} = require('./util')
-const {DEFAULT_NAMESPACE} = require('./options')
+const {
+  DEFAULT_NAMESPACE, DEFAULT_NAMESPACE_TYPE,
+  checkNamespaceType
+} = require('./options')
 
 class ApolloCluster extends Base {
   constructor (options) {
@@ -36,14 +39,25 @@ class ApolloCluster extends Base {
     return this._options.cluster
   }
 
-  namespace (namespace = DEFAULT_NAMESPACE) {
-    const child = this._child(namespace, () => {
-      // Start polling instantly,
-      // even if the namespace is not ready
-      this._polling.addNamespace(namespace)
-    })
+  _create (name, type, init) {
+    const child = new this._Child({
+      ...this._options,
+      [this._key]: name
+    }, type)
+
+    init && init(child)
 
     return child
+  }
+
+  namespace (namespace = DEFAULT_NAMESPACE, type = DEFAULT_NAMESPACE_TYPE) {
+    checkNamespaceType(type)
+
+    return this._child(namespace, type, () => {
+      // Start polling instantly,
+      // even if the namespace is not ready
+      this._polling.addNamespace(namespace, type)
+    })
   }
 
   enableUpdateNotification (enable) {

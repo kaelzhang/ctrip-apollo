@@ -200,9 +200,10 @@ Creates a new cluster under the current application.
 
 Returns `ApolloCluster`
 
-### app.namespace(namespaceName?): ApolloNamespace
+### app.namespace(namespaceName?, type?): ApolloNamespace
 
 - **namespaceName?** `string='application'` the optional namespace name which defaults to `'application'` which is the default namespace name of Ctrip's Apollo config service.
+- **type?** `enum<PROPERTIES|JSON>=PROPERTIES` the type of the configuration format syntax. Defaults to `'PROPERTIES'`
 
 Create a new namespace under the default cluster of the current application
 

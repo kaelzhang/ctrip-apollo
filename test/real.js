@@ -26,6 +26,7 @@ const ns = app
 
 const run = async () => {
   await ns.ready()
+
   console.log('all configurations', ns.config())
 }
 

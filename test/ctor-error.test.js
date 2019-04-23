@@ -20,7 +20,12 @@ const CASES = [
   [{
     host,
     appId
-  }, 'INVALID_NAMESPACE_NAME', opts => apollo(opts).namespace(1)]
+  }, 'INVALID_NAMESPACE_NAME', opts => apollo(opts).namespace(1)],
+  [{
+    host,
+    appId
+  }, 'INVALID_NAMESPACE_TYPE', opts =>
+    apollo(opts).namespace('application', 'TEXT')]
 ]
 
 CASES.forEach(([opts, code, runner = apollo]) => {

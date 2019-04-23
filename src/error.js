@@ -37,6 +37,9 @@ EE('cachePath', 'string', 'options.cachePath')
 EE('CLUSTER_NAME', 'string', 'cluster')
 EE('NAMESPACE_NAME', 'string', 'namespace')
 
+E('INVALID_NAMESPACE_TYPE',
+  'namespace type must be either "PROPERTIES" or "JSON", but got `%s`')
+
 // Wrap other errors
 ////////////////////////////////////////////////////////////////////////
 const EEE = (code, message) => E(code, {

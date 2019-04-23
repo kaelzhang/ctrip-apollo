@@ -6,6 +6,7 @@ const log = require('util').debuglog('ctrip-apollo')
 const request = require('request')
 
 const {queryUpdate} = require('./url')
+const {DEFAULT_NAMESPACE_TYPE} = require('./options')
 const {error} = require('./error')
 
 // TIMEOUT SHOULD LONGER THAN 60s
@@ -18,6 +19,7 @@ class Polling extends EventEmitter {
 
     this._options = options
     this._ns = new Set()
+    this._nsTypes = Object.create(null)
     this._notificationIds = Object.create(null)
     this._abandoned = false
     this._started = false
@@ -44,8 +46,10 @@ class Polling extends EventEmitter {
     }
   }
 
-  addNamespace (namespace) {
+  addNamespace (namespace, type) {
     this._ns.add(namespace)
+    this._nsTypes[namespace] = type
+
     this._check()
   }
 
@@ -54,7 +58,9 @@ class Polling extends EventEmitter {
 
     for (const namespace of this._ns.values()) {
       const item = {
-        namespaceName: `${namespace}.json`,
+        namespaceName: this._nsTypes[namespace] === DEFAULT_NAMESPACE_TYPE
+          ? namespace
+          : `${namespace}.json`,
         notificationId: (namespace in this._notificationIds)
           ? this._notificationIds[namespace]
           : 0

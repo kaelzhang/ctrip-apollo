@@ -49,10 +49,12 @@ const CONVERTER = {
 const NOOP = () => {}
 
 class ApolloNamespace extends EventEmitter {
-  constructor (options) {
+  constructor (options, type) {
     super()
 
     this._options = options
+    this._type = type
+
     this._config = null
     this._releaseKey = null
     this._cacheFile = this._createCacheFile()
