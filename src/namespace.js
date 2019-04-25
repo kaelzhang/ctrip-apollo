@@ -213,6 +213,7 @@ class ApolloNamespace extends EventEmitter {
       })
     })
 
+    this.emit('updated')
     this._save(this._config)
   }
 

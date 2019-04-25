@@ -332,6 +332,10 @@ Returns `string` the cluster name
 
 ### Event: `'change'`
 
+- **e.key** `string` key of the configuration that has been changed
+- **e.oldValue** `any` the old value of the configuration
+- **e.newValue** `any` the new value of the configuration that has been set.
+
 Emits if the any configuration changes.
 
 By default, `ctrip-apollo` uses HTTP long polling to listen the changes of the configurations.
@@ -346,13 +350,25 @@ namespace.on('change', e => {
 
 ### Event: `'add'`
 
+- **e.key** `string`
+- **e.value** `any` the value of the newly added configuration
+
 Emits if a new configuration key has been added
 
 ### Event: `'delete'`
 
+- **e.key** `string`
+- **e.value** `any` the value of the configuration that has been deleted.
+
 Emits if a configuration key has been deleted
 
 If `options.fetchInterval` is set to `0` and `options.updateNotification` is set to `false`, then the event will never emit.
+
+### Event: `'updated'`
+
+> Added in 4.2.0
+
+Emits after all changes, adding and deletion of the current updation have been processed.
 
 ### Event: `'fetch-error'`
 
