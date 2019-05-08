@@ -10,8 +10,26 @@ const {createKey} = require('./util')
 const {error, composeError} = require('./error')
 const {queryConfigAsJson, queryConfig} = require('./url')
 
-const request = url => new Promise((resolve, reject) => {
+const request = (url, timeout) => new Promise((resolve, reject) => {
+  let timedout = false
+
+  let timer = timeout
+    ? setTimeout(() => {
+      timedout = true
+      reject(error('FETCH_TIMEOUT', timeout))
+    }, timeout)
+    : null
+
   req(url, (err, response) => {
+    if (timedout) {
+      return
+    }
+
+    if (timeout) {
+      clearTimeout(timer)
+      timer = null
+    }
+
     if (err) {
       return reject(error('FETCH_REQUEST_ERROR', err))
     }
@@ -101,7 +119,7 @@ class ApolloNamespace extends EventEmitter {
     const {
       noChange,
       config
-    } = await request(url)
+    } = await request(url, this._options.fetchTimeout)
 
     if (noChange) {
       return {

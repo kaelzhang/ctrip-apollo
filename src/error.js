@@ -28,6 +28,7 @@ EE('cluster', 'string', 'options.cluster')
 EE('namespace', 'string', 'options.namespace')
 EE('ip', 'string', 'options.ip')
 EE('dataCenter', 'string', 'options.dataCenter')
+EE('fetchTimeout', 'non-negative number', 'options.fetchTimeout')
 EE('fetchInterval', 'number', 'options.refreshInterval')
 EE('enableUpdateNotification', 'boolean', 'options.enableUpdateNotification')
 EE('pollingRetryPolicy', 'function', 'options.pollingRetryPolicy')
@@ -55,6 +56,8 @@ const EEE = (code, message) => E(code, {
 
   return err
 })
+
+E('FETCH_TIMEOUT', 'fetch timed out for it not completed in %s milliseconds')
 
 EEE('FETCH_REQUEST_ERROR', 'fails to get config')
 

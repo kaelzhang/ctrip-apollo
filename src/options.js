@@ -46,6 +46,9 @@ const RULES = {
     validate: isString,
     optional: true
   },
+  fetchTimeout: {
+    validate: v => isNumber(v) && v >= 0
+  },
   fetchInterval: {
     validate: isNumber
   },
@@ -113,6 +116,7 @@ const checkOptions = options => {
     namespace = DEFAULT_NAMESPACE,
     ip,
     dataCenter,
+    fetchTimeout = 0,
     fetchInterval = DEFAULT_REFRESH_INTERVAL,
     fetchCachedConfig = true,
     enableUpdateNotification = true,
@@ -129,6 +133,7 @@ const checkOptions = options => {
     namespace,
     ip,
     dataCenter,
+    fetchTimeout,
     fetchInterval,
     fetchCachedConfig,
     enableUpdateNotification,

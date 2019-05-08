@@ -1,6 +1,6 @@
 {
   "name": "ctrip-apollo",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "The most delightful and handy Node.js client for ctrip apollo configuration service",
   "main": "src/index.js",
   "scripts": {
@@ -43,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "apollo-mock-server": "^1.1.0",
+    "apollo-mock-server": "^1.2.0",
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
     "delay": "^4.2.0",
@@ -51,7 +51,7 @@
     "eslint-config-ostai": "^3.0.0",
     "eslint-plugin-import": "^2.17.2",
     "get-port": "^5.0.0",
-    "nyc": "^14.0.0"
+    "nyc": "^14.1.0"
   },
   "dependencies": {
     "core-util-is": "^1.0.2",

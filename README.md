@@ -206,6 +206,7 @@ Optional options:
   - **enableUpdateNotification?** `boolean=true` set to `false` to disable update notification.
   - **pollingRetryPolicy?** [`PollingRetryPolicy=apollo.DEFAULT_POLLING_RETRY_POLICY`](#pollingretrypolicy)
   - **enableFetch?** `boolean=false` set to `true` to enable the feature
+  - **fetchTimeout** `number=0` timeout in milliseconds before the initial fetch or interval fetch result in an `FETCH_TIMEOUT` error.
   - **fetchInterval?** `number=5 * 60 * 1000` interval in milliseconds to pull the new configurations. Defaults to `5` minutes. Setting this option to `0` will disable the feature.
   - **fetchCachedConfig?** `boolean=true` whether refresh configurations by fetching the restful API with caches. Defaults to `true`. If you want to always fetch the latest configurations (not recommend), set the option to `false`
   - **cachePath?** `path` specify this option to enable the feature to save configurations to the disk

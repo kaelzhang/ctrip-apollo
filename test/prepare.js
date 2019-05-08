@@ -3,9 +3,10 @@ const {
   superAdmin
 } = require('apollo-mock-server')
 
-const prepare = async pollingTimeout => {
+const prepare = async (pollingTimeout, configDelay = 0) => {
   const config = new ConfigService({
-    pollingTimeout
+    pollingTimeout,
+    configDelay
   })
 
   const port = await config.listen()
