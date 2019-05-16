@@ -27,9 +27,14 @@ The most delightful and handy Node.js client for Ctrip's [apollo](https://github
 
 `ctrip-apollo` directly uses `async/await` and requires node >= 7.10.1
 
-### Related NPM Packages:
+### Related NPM Package: [`apollo-declare`](https://github.com/kaelzhang/apollo-declare)
 
-- [apollo-declare](https://github.com/kaelzhang/apollo-declare)
+For some scenarios, we want to:
+
+- declare a certain config key before we use it which makes sure that we never use a key that does not exist in apollo config service.
+- fallback to a base namespace if the config key is not defined in current namespace.
+
+Then you can try [`apollo-declare`](https://github.com/kaelzhang/apollo-declare)
 
 ## Install
 
