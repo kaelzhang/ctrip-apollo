@@ -27,6 +27,10 @@ The most delightful and handy Node.js client for Ctrip's [apollo](https://github
 
 `ctrip-apollo` directly uses `async/await` and requires node >= 7.10.1
 
+### Related NPM Packages:
+
+- [**apollo-declare**](https://github.com/kaelzhang/apollo-declare)
+
 ## Install
 
 ```sh
