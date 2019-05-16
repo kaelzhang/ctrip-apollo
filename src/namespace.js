@@ -374,6 +374,11 @@ class ApolloNamespace extends EventEmitter {
     return this._config[key]
   }
 
+  has (key) {
+    this._checkReady('has')
+    return key in this._config
+  }
+
   enableFetch (enable) {
     enable
       ? this._enableFetch()

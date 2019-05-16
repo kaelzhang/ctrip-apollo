@@ -313,6 +313,12 @@ Returns the config value of the corresponding key `key`
 console.log('config for host', namespace.get('host'))
 ```
 
+### namespace.has(key): boolean
+
+> new in 4.4.0
+
+Check if a key is in the config.
+
 ### namespace.enableFetch(enable): this
 
 - **enable** `boolean`

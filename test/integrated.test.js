@@ -122,6 +122,8 @@ test.serial('fetch nocache/cache with no change', async t => {
 })
 
 test.serial('add a new config', async t => {
+  t.is(baz.has(clusterKey2), false)
+
   await new Promise(resolve => {
     baz.once('add', ({
       key,
@@ -130,6 +132,7 @@ test.serial('add a new config', async t => {
       t.deepEqual(baz.get(clusterKey), clusterName2)
       t.is(key, clusterKey2)
       t.is(value, clusterName)
+      t.is(baz.has(clusterKey2), true)
 
       resolve()
     })
@@ -148,11 +151,12 @@ test.serial('delete key', async t => {
       t.deepEqual(baz.get(clusterKey), clusterName2)
       t.is(key, clusterKey2)
       t.is(value, clusterName)
+      t.is(baz.has(clusterKey2), false)
 
       resolve()
     })
 
-    abaz.delete(clusterKey2, clusterName)
+    abaz.delete(clusterKey2)
     .publish()
   })
 })
