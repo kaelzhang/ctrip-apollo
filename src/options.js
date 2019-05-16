@@ -1,6 +1,6 @@
 const path = require('path')
 const {
-  isObject, isString, isNumber, isBoolean, isFunction
+  isObject, isString, isNumber, isBoolean, isFunction, isUndefined
 } = require('core-util-is')
 const {error} = require('./error')
 
@@ -158,12 +158,15 @@ const checkNamespaceType = type => {
 
 const AVAILABLE_OPTIONS = Object.keys(RULES)
 
+const setDefault = (value, defaults) => isUndefined(value)
+  ? defaults
+  : value
+
 module.exports = {
   checkOptions,
   checkNamespaceType,
+  setDefault,
   AVAILABLE_OPTIONS,
-  DEFAULT_CLUSTER,
-  DEFAULT_NAMESPACE,
   DEFAULT_NAMESPACE_TYPE,
   ATOM_RETRY_DELAY
 }

@@ -29,7 +29,7 @@ The most delightful and handy Node.js client for Ctrip's [apollo](https://github
 
 ### Related NPM Packages:
 
-- [**apollo-declare**](https://github.com/kaelzhang/apollo-declare)
+- [apollo-declare](https://github.com/kaelzhang/apollo-declare)
 
 ## Install
 

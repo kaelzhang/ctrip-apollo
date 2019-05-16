@@ -4,8 +4,9 @@ const {ApolloNamespace} = require('./namespace')
 const {Polling} = require('./polling')
 const {Base} = require('./util')
 const {
-  DEFAULT_NAMESPACE, DEFAULT_NAMESPACE_TYPE,
-  checkNamespaceType
+  DEFAULT_NAMESPACE_TYPE,
+  checkNamespaceType,
+  setDefault
 } = require('./options')
 
 class ApolloCluster extends Base {
@@ -50,8 +51,9 @@ class ApolloCluster extends Base {
     return child
   }
 
-  namespace (namespace = DEFAULT_NAMESPACE, type = DEFAULT_NAMESPACE_TYPE) {
+  namespace (namespace, type = DEFAULT_NAMESPACE_TYPE) {
     checkNamespaceType(type)
+    namespace = setDefault(namespace, this._options.namespace)
 
     return this._child(namespace, type, () => {
       // Start polling instantly,

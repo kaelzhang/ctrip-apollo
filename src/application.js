@@ -1,6 +1,5 @@
 const {
-  checkOptions,
-  DEFAULT_CLUSTER
+  checkOptions, setDefault
 } = require('./options')
 const {Base} = require('./util')
 
@@ -12,7 +11,8 @@ module.exports = class ApolloApplication extends Base {
       ApolloCluster, 'cluster', 'INVALID_CLUSTER_NAME')
   }
 
-  cluster (cluster = DEFAULT_CLUSTER) {
+  cluster (cluster) {
+    cluster = setDefault(cluster, this._options.cluster)
     return this._child(cluster)
   }
 
