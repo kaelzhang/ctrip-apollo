@@ -1,7 +1,7 @@
 const test = require('ava')
 const delay = require('delay')
 
-const apollo = require('../src')
+const apollo = require('..')
 const opts = require('../src/options')
 
 opts.ATOM_RETRY_DELAY = 10

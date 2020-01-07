@@ -1,5 +1,8 @@
-const {AVAILABLE_OPTIONS} = require('./options')
-const {DEFAULT_POLLING_RETRY_POLICY} = require('./polling')
+const {
+  AVAILABLE_OPTIONS,
+  DEFAULT_POLLING_RETRY_POLICY
+} = require('./options')
+
 const ApolloApplication = require('./application')
 
 const apollo = options => new ApolloApplication(options)
