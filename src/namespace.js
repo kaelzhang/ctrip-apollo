@@ -4,11 +4,11 @@ const log = require('util').debuglog('ctrip-apollo')
 
 const req = require('request')
 const fs = require('fs-extra')
-const {diff} = require('diff-sorted-array')
+const { diff } = require('diff-sorted-array')
 
-const {createKey} = require('./util')
-const {error, composeError} = require('./error')
-const {queryConfigAsJson, queryConfig} = require('./url')
+const { createKey } = require('./util')
+const { error, composeError } = require('./error')
+const { queryConfigAsJson, queryConfig } = require('./url')
 
 const request = (url, timeout) => new Promise((resolve, reject) => {
   let timedout = false
@@ -64,10 +64,10 @@ const CONVERTER = {
   NO_CACHE: json => json.configurations
 }
 
-const NOOP = () => {}
+const NOOP = () => { }
 
 class ApolloNamespace extends EventEmitter {
-  constructor (options, type) {
+  constructor(options, type) {
     super()
 
     this._options = options
@@ -81,15 +81,15 @@ class ApolloNamespace extends EventEmitter {
     this._ready = false
   }
 
-  get namespace () {
+  get namespace() {
     return this._options.namespace
   }
 
-  get cluster () {
+  get cluster() {
     return this._options.cluster
   }
 
-  _createCacheFile () {
+  _createCacheFile() {
     const {
       cachePath
     } = this._options
@@ -115,7 +115,7 @@ class ApolloNamespace extends EventEmitter {
     return path.join(cachePath, filename)
   }
 
-  async _load (url, converter) {
+  async _load(url, converter) {
     const {
       noChange,
       config
@@ -140,7 +140,7 @@ class ApolloNamespace extends EventEmitter {
     }
   }
 
-  _loadWithNoCache () {
+  _loadWithNoCache() {
     const url = queryConfig({
       ...this._options,
       releaseKey: this._releaseKey
@@ -150,14 +150,14 @@ class ApolloNamespace extends EventEmitter {
     return this._load(url, CONVERTER.NO_CACHE)
   }
 
-  _loadWithCache () {
+  _loadWithCache() {
     const url = queryConfigAsJson(this._options)
 
     log('client: load with cache: %s', url)
     return this._load(url, CONVERTER.CACHE)
   }
 
-  _save (config) {
+  _save(config) {
     const cacheFile = this._cacheFile
     if (!cacheFile) {
       return
@@ -176,7 +176,7 @@ class ApolloNamespace extends EventEmitter {
     })
   }
 
-  _diffAndSave ({
+  _diffAndSave({
     noChange,
     config
   }) {
@@ -192,22 +192,30 @@ class ApolloNamespace extends EventEmitter {
       deleted
     } = diff(oldKeys, newKeys)
 
-    unchanged.forEach(key => {
-      const oldValue = this._config[key]
-      const newValue = config[key]
-
-      if (oldValue === newValue) {
-        return
-      }
-
-      this._config[key] = newValue
-
+    if (this.options.entireRes) {
       this.emit('change', {
-        oldValue,
-        newValue,
-        key
+        oldValue: this._config,
+        newValue: config,
       })
-    })
+    } else {
+      unchanged.forEach(key => {
+        const oldValue = this._config[key]
+        const newValue = config[key]
+
+        if (oldValue === newValue) {
+          return
+        }
+
+        this._config[key] = newValue
+
+        this.emit('change', {
+          oldValue,
+          newValue,
+          key
+        })
+      })
+    }
+
 
     added.forEach(key => {
       const value = config[key]
@@ -235,7 +243,7 @@ class ApolloNamespace extends EventEmitter {
     this._save(this._config)
   }
 
-  async fetch (withCache) {
+  async fetch(withCache) {
     if (!this._ready) {
       return
     }
@@ -254,7 +262,7 @@ class ApolloNamespace extends EventEmitter {
     this._diffAndSave(result)
   }
 
-  async ready () {
+  async ready() {
     const config = this._options.skipInitFetchIfCacheFound
       ? await this._readOrFetch()
       : await this._fetchOrFallback()
@@ -273,7 +281,7 @@ class ApolloNamespace extends EventEmitter {
     return this
   }
 
-  async _readCache () {
+  async _readCache() {
     const cacheFile = this._cacheFile
 
     if (!cacheFile) {
@@ -293,7 +301,7 @@ class ApolloNamespace extends EventEmitter {
     }
   }
 
-  async _firstFetch () {
+  async _firstFetch() {
     const {
       config
     } = await this._loadWithNoCache()
@@ -303,7 +311,7 @@ class ApolloNamespace extends EventEmitter {
     return config
   }
 
-  async _readOrFetch () {
+  async _readOrFetch() {
     let readError
     let config
 
@@ -328,7 +336,7 @@ class ApolloNamespace extends EventEmitter {
     }
   }
 
-  async _fetchOrFallback () {
+  async _fetchOrFallback() {
     let fetchError
 
     try {
@@ -358,28 +366,28 @@ class ApolloNamespace extends EventEmitter {
     )
   }
 
-  _checkReady (name) {
+  _checkReady(name) {
     throw error('NOT_READY', name)
   }
 
-  config () {
+  config() {
     this._checkReady('config')
     return {
       ...this._config
     }
   }
 
-  get (key) {
+  get(key) {
     this._checkReady('get')
     return this._config[key]
   }
 
-  has (key) {
+  has(key) {
     this._checkReady('has')
     return key in this._config
   }
 
-  enableFetch (enable) {
+  enableFetch(enable) {
     enable
       ? this._enableFetch()
       : this._disableFetch()
@@ -387,7 +395,7 @@ class ApolloNamespace extends EventEmitter {
     return this
   }
 
-  _enableFetch () {
+  _enableFetch() {
     const options = this._options
     options.enableFetch = true
 
@@ -404,7 +412,7 @@ class ApolloNamespace extends EventEmitter {
     }, options.fetchInterval)
   }
 
-  _disableFetch () {
+  _disableFetch() {
     this._options.enableFetch = false
 
     if (this._fetchTimer) {
