@@ -128,7 +128,7 @@ const checkOptions = options => {
     skipInitFetchIfCacheFound = false,
     enableFetch = false,
     cachePath,
-    entireRes,
+    entireRes = false,
   } = options
 
   return ensureType({
