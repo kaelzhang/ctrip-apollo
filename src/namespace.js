@@ -192,29 +192,22 @@ class ApolloNamespace extends EventEmitter {
       deleted
     } = diff(oldKeys, newKeys)
 
-    if (this.options.entireRes) {
+    unchanged.forEach(key => {
+      const oldValue = this._config[key]
+      const newValue = config[key]
+
+      if (oldValue === newValue) {
+        return
+      }
+
+      this._config[key] = newValue
+
       this.emit('change', {
-        oldValue: this._config,
-        newValue: config,
+        oldValue,
+        newValue,
+        key
       })
-    } else {
-      unchanged.forEach(key => {
-        const oldValue = this._config[key]
-        const newValue = config[key]
-
-        if (oldValue === newValue) {
-          return
-        }
-
-        this._config[key] = newValue
-
-        this.emit('change', {
-          oldValue,
-          newValue,
-          key
-        })
-      })
-    }
+    })
 
     added.forEach(key => {
       const value = config[key]
