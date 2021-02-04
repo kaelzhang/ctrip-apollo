@@ -192,7 +192,7 @@ class ApolloNamespace extends EventEmitter {
       deleted
     } = diff(oldKeys, newKeys)
 
-    if (this.options.entireRes) {
+    if (this._options.entireRes) {
       this.emit('change', {
         oldValue: this._config,
         newValue: config,

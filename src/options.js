@@ -73,7 +73,8 @@ const RULES = {
     set: path.resolve
   },
   entireRes: {
-    validate: isBoolean
+    validate: isBoolean,
+    optional: true,
   }
 }
 
