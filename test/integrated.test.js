@@ -199,3 +199,20 @@ test.serial('could enable notification again', async t => {
     app.cluster().enableUpdateNotification(true)
   })
 })
+
+test.serial('suppor return result at once', async t => {
+  baz._options.entireRes = true
+
+  await new Promise(resolve => {
+    baz.once('change', ({
+      newValue,
+    }) => {
+      t.is(baz.get(clusterKey), newValue[clusterKey])
+      t.is(baz.get(clusterKey2), newValue[clusterKey2])
+      resolve()
+    })
+
+    abaz.set(clusterKey, clusterName)
+    .publish()
+  })
+})

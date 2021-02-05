@@ -71,6 +71,10 @@ const RULES = {
     validate: isString,
     optional: true,
     set: path.resolve
+  },
+  entireRes: {
+    validate: isBoolean,
+    optional: true,
   }
 }
 
@@ -123,7 +127,8 @@ const checkOptions = options => {
     pollingRetryPolicy = DEFAULT_POLLING_RETRY_POLICY,
     skipInitFetchIfCacheFound = false,
     enableFetch = false,
-    cachePath
+    cachePath,
+    entireRes = false,
   } = options
 
   return ensureType({
@@ -140,7 +145,8 @@ const checkOptions = options => {
     pollingRetryPolicy,
     skipInitFetchIfCacheFound,
     enableFetch,
-    cachePath
+    cachePath,
+    entireRes
   })
 }
 
