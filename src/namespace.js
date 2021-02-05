@@ -197,6 +197,7 @@ class ApolloNamespace extends EventEmitter {
         oldValue: this._config,
         newValue: config,
       })
+      this._config = config
     } else {
       unchanged.forEach(key => {
         const oldValue = this._config[key]
