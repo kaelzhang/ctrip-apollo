@@ -192,6 +192,10 @@ class ApolloNamespace extends EventEmitter {
       deleted
     } = diff(oldKeys, newKeys)
 
+    const oldConfig = {
+      ...this._config
+    }
+
     unchanged.forEach(key => {
       const oldValue = this._config[key]
       const newValue = config[key]
@@ -231,7 +235,13 @@ class ApolloNamespace extends EventEmitter {
       })
     })
 
-    this.emit('updated')
+    this.emit('updated', {
+      oldConfig,
+      newConfig: {
+        ...this._config
+      }
+    })
+
     this._save(this._config)
   }
 
