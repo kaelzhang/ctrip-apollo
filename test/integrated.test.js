@@ -124,17 +124,41 @@ test.serial('fetch nocache/cache with no change', async t => {
 test.serial('add a new config', async t => {
   t.is(baz.has(clusterKey2), false)
 
-  await new Promise(resolve => {
+  const oldConfigBak = baz.config()
+
+  await new Promise((resolve, reject) => {
+    let oldConfigGot
+
     baz.once('add', ({
       key,
       value
     }) => {
+      if (oldConfigGot) {
+        return reject(
+          new Error('updated event emitted before add')
+        )
+      }
+
       t.deepEqual(baz.get(clusterKey), clusterName2)
       t.is(key, clusterKey2)
       t.is(value, clusterName)
       t.is(baz.has(clusterKey2), true)
 
       resolve()
+    })
+
+    baz.once('updated', ({
+      oldConfig,
+      newConfig
+    }) => {
+      oldConfigGot = oldConfig
+
+      t.deepEqual(oldConfig, oldConfigBak)
+      t.false(clusterKey2 in oldConfig)
+      t.deepEqual(newConfig, {
+        [clusterKey]: clusterName2,
+        [clusterKey2]: clusterName
+      })
     })
 
     abaz.set(clusterKey2, clusterName)

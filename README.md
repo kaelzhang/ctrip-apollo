@@ -382,7 +382,10 @@ If `options.fetchInterval` is set to `0` and `options.updateNotification` is set
 
 ### Event: `'updated'`
 
-> Added in 4.2.0
+> Added in 4.2.0, event data added in 4.5.0
+
+- **e.oldConfig** `object` the old config
+- **e.newConfig** `object` the new config after updated
 
 Emits after all changes, adding and deletion of the current updation have been processed.
 
