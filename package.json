@@ -57,7 +57,7 @@
     "core-util-is": "^1.0.2",
     "diff-sorted-array": "^3.0.0",
     "err-object": "^5.1.4",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "request": "^2.88.0"
   }
 }
